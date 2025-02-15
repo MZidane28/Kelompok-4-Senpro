@@ -15,19 +15,19 @@
 
 ## Nama Produk: Empati
 
-### Jenis Produk:
+### Jenis Produk
 Aplikasi berbasis AI untuk kesehatan mental yang menggabungkan chatbot, mood tracking, dan jurnal digital dalam satu platform.
 
 ---
 
-## Latar Belakang:
+## 📝 Latar Belakang
 Kesehatan mental sudah saatnya untuk diperhatikan, terutama pada kalangan mahasiswa dan pekerja. Berdasarkan data Kementerian Kesehatan RI tahun 2023, **76% mahasiswa mengalami stres akademik**, sementara **52% pekerja mengalami burnout**. Namun, akses ke layanan profesional masih terbatas akibat biaya, stigma sosial, dan kurangnya tenaga ahli.
 
 Teknologi AI dapat membantu dengan menyediakan chatbot kesehatan mental yang memungkinkan dengan fitur seperti mood tracking, jurnal, dan konsultasi awal. Dengan dukungan komputasi awan dan jaringan komputer, sistem ini dapat memberikan dukungan awal serta menghubungkan pengguna dengan tenaga profesional jika diperlukan.
 
 ---
 
-## Permasalahan:
+## 🔧 Permasalahan
 - Bagaimana membuat Chatbot yang dapat berguna dan interaksi yang nyaman bagi pengguna?
 - Bagaimana sistem dapat melakukan mood tracking dengan efektif sekaligus memberikan saran berdasarkan mood pengguna?
 - Bagaimana mengintegrasikan fitur jurnal yang membantu pengguna untuk merefleksikan perasaan mereka?
@@ -35,14 +35,14 @@ Teknologi AI dapat membantu dengan menyediakan chatbot kesehatan mental yang mem
 
 ---
 
-## Ide Solusi:
+## 💡 Ide Solusi
 Aplikasi berbasis web yang membantu pengguna untuk bisa berkomunikasi dengan AI chatbot yang membantu mereka jika menghadapi stres, kecemasan, ataupun depresi. AI Chatbot juga bisa merekomendasikan jika pengguna sebaiknya bertemu dengan psikolog dan mencari lokasi klinik psikologis terdekat.
 
 Pengguna juga dapat mengisi jurnal mereka per harian untuk nanti bisa dianalisis dan sebagai konteks bagi Model AI-nya. Fitur ini bisa dijadikan fitur premium berbayar, sedangkan konsultasi biasa dapat digratiskan.
 
 ---
 
-## Analisis Kompetitor:
+## 🎯 Analisis Kompetitor
 
 | **Nama**     | **Jenis Kompetitor** | **Jenis Produk**                                                   | **Target Customer**                                   | **Kelebihan**                                                                                     | **Kekurangan**                                                           | **Key Competitive Advantage & Unique Value**                                                      |
 |--------------|----------------------|--------------------------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
