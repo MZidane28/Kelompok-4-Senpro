@@ -7,7 +7,7 @@
 - **MUHAMMAD ZIDANE SEPTIAN IRSYADI** - 22/504678/TK/55212
 - **RAKHEL FADHILA NASTITI** - 22/504692/TK/55216
 
-### "Project Senior Project TI"
+### Project Senior Project TI
 
 **Departemen Teknologi Elektro dan Teknologi Informasi, Fakultas Teknik, Universitas Gadjah Mada**
 
