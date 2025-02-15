@@ -9,8 +9,7 @@
 
 ### "Project Senior Project TI"
 
-### Instansi:
-Departemen Teknologi Elektro dan Teknologi Informasi, Fakultas Teknik, Universitas Gadjah Mada
+**Departemen Teknologi Elektro dan Teknologi Informasi, Fakultas Teknik, Universitas Gadjah Mada**
 
 ---
 
