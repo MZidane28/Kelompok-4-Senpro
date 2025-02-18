@@ -55,19 +55,19 @@ Pengguna juga dapat mengisi jurnal mereka per harian untuk nanti bisa dianalisis
 
 ### 📍 Metodologi SDLC: Waterfall Model
 
-##📌 Alasan pemilihan metodologi
+## 📌 Alasan pemilihan metodologi
 - Pengerjaan akan dilakukan secara bertahap.
 - Tidak memiliki sumber daya untuk melakukan iterasi.
 - Waktu pengerjaan terbatas (1 semester).
 
 ---
 
-##🎯 Tujuan dari Produk
+## 🎯 Tujuan dari Produk
 Teman curhat berbasis AI untuk membantu individu mengelola stres dan masalah hidup.
 
 ---
 
-##👥 Pengguna Potensial dari Produk dan Kebutuhan Para Pengguna
+## 👥 Pengguna Potensial dari Produk dan Kebutuhan Para Pengguna
 Pengguna Potensial:
 - Individu dengan masalah kesehatan mental ringan hingga sedang.
 - Individu yang ingin meningkatkan kesehatan mental.
