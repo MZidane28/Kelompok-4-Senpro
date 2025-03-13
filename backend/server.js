@@ -17,7 +17,11 @@ app.use(express.json());
 
 
 // Basic route
+app.get('/', (req, res) => {
+    res.send('<h1>Server is ON</h1>');
+  });
 app.use('/auth', require('./domains/authentication/authRoutes'))
+
 
 // Start server
 app.listen(PORT, () => {
