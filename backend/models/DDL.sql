@@ -14,9 +14,11 @@ CREATE TABLE IF NOT EXISTS public.user
     password text NOT NULL,
     email text UNIQUE NOT NULL,
     phone_number UNIQUE text,
-    gender gender_type NOT NULL DEFAULT 'other',
-    date_of_birth DATE NOT NULL,
+    gender gender_type,
+    date_of_birth DATE,
     full_name text,
+    forget_password_token UNIQUE DEFAULT NULL,
+    forget_password_expire TIMESTAMP,
     CONSTRAINT id_primary_user PRIMARY KEY (id)
 );
 
@@ -76,6 +78,20 @@ CREATE TABLE IF NOT EXISTS public.professional_contacts
     contact_info text NOT NULL,
     speciality text NOT NULL,
     CONSTRAINT id_primary_professional_contacts  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.user_session
+(
+    id_user bigint NOT NULL,
+    token text NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT id_primary_user_session  PRIMARY KEY (id_user, token, created_at)
+    CONSTRAINT 
+        fk_user_session_user_id  FOREIGN KEY (id_user)
+        REFERENCES public.user (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 
