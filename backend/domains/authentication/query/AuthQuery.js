@@ -39,14 +39,15 @@ const checkUserAlreadyExist = async(username, email) => {
     const client = await db.connect();
     try {
         const searchUser = `
-            SELECT id, password, username, email FROM public.user WHERE username = $1 OR email = $2;
+            SELECT id, password, username, email, already_verified, profile_filled FROM public.user WHERE username = $1 OR email = $2;
         `
         const resultSession = await client.query(searchUser, [username, email]);
         client.release()
         return {
             is_error : false,
             SQLResponse : resultSession,
-            error_message : null
+            error_message : null,
+            error : null,
         }
     } catch (error) {
         client.release()
@@ -54,8 +55,43 @@ const checkUserAlreadyExist = async(username, email) => {
             is_error : true,
             SQLResponse : null,
             other_error_message : null,
-            sql_error_message : error.message
+            sql_error_message : error.message,
+            error : error,
         }
+    }
+}
+
+/**
+ * @brief cari token di tabel user_session
+ */
+const checkTokenSession = async(id, token) => {
+    const client = await db.connect();
+    try {
+        const searchUserToken = `
+            SELECT public.user.id, public.user.username, public.user.email, public.user.already_verified, public.user.profile_filled, user_session.token 
+            FROM public.user_session 
+            JOIN public.user ON public.user.id = user_session.id_user
+            WHERE id_user = $1 AND token = $2
+            ;
+        `
+        const resultSession = await client.query(searchUserToken, [id, token]);
+        return {
+            is_error : false,
+            SQLResponse : resultSession,
+            error_message : null,
+            error : null,
+        }
+    } catch (error) {
+        
+        return {
+            is_error : true,
+            SQLResponse : null,
+            other_error_message : null,
+            sql_error_message : error.message,
+            error : error,
+        }
+    } finally {
+        client.release()
     }
 }
 
@@ -103,6 +139,62 @@ const updateOrInsertSession = async(id_user, token) => {
             other_error_message : null,
             sql_error_message : error.message
         }
+    }
+}
+
+/**
+ * @param {string} id_user 
+ * @param {string} cookie_token 
+ * @param {boolean} is_remember_me
+ * @brief insert token authentication
+ */
+const insertOrUpdateNewSession = async(id_user, cookie_token, is_remember_me) => {
+    const client = await db.connect();
+    try {
+        await client.query("BEGIN")
+        const insert_token = `
+           INSERT INTO user_session (id_user, expires_at) VALUES ($1, ${is_remember_me ? `CURRENT_TIMESTAMP + INTERVAL '7 days'` : `CURRENT_TIMESTAMP + INTERVAL '24 hours'`}) RETURNING *
+        `
+        const check_token = `
+            SELECT id_user, token FROM user_session WHERE id_user = $1 AND token = $2;
+        `
+        let resultSession;
+        if(cookie_token) {
+
+            // check session
+            const checkSession = await client.query(check_token, [id_user, cookie_token]);
+            if(checkSession.rowCount == 0) {
+                // insert new token
+                
+                resultSession = await client.query(insert_token, [id_user]);
+            } else {
+                // token yang sudah ada 
+                return {
+                    is_error : false,
+                    SQLResponse : checkSession,
+                    error_message : null
+                }
+            }
+        } else {
+            // new session
+            resultSession = await client.query(insert_token, [id_user]);
+        }
+        await client.query("COMMIT")
+        return {
+            is_error : false,
+            SQLResponse : resultSession,
+            error_message : null
+        }
+    } catch (error) {
+        await client.query("ROLLBACK")
+        return {
+            is_error : true,
+            SQLResponse : null,
+            other_error_message : null,
+            sql_error_message : error.message
+        }
+    } finally {
+        client.release()
     }
 }
 
@@ -171,6 +263,8 @@ const insertNewUser = async(username, email, hashed_password) => {
         }
     }
 }
+
+
 
 /**
  * @param {string} hashed_password 
@@ -264,5 +358,7 @@ module.exports = {
     insertNewUser,
     insertNewPassword,
     updateForgetPasswordToken,
-    deleteSession
+    deleteSession,
+    insertOrUpdateNewSession,
+    checkTokenSession
 }
