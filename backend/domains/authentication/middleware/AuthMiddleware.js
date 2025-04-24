@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const authQuery = require("../query/AuthQuery")
 const cookieConfig = require('../../../configs/cookieConfig')
 const AuthQuery = require("../query/AuthQuery")
+const moment = require('moment-timezone');
 
 
 /**
@@ -30,6 +31,14 @@ const MiddlewareEnsureUser = asyncHandler( async(req,res,next) => {
         return res.status(401).json({message : "session tidak terotorisasi"})
     }
     const dataUser = searchTokenQuery.SQLResponse.rows[0];
+
+    const timezone = process.env.MOMENT_TIMEZONE
+    const time_expire = moment.tz(dataUser.expires_at, timezone)
+    const now = moment.tz(timezone);
+    
+    if(now.isAfter(time_expire)) {
+        return res.status(401).json({message : "Session sudah expire"})
+    }
 
     req.user = {
         id: dataUser.id,

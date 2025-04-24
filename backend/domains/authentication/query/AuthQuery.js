@@ -10,7 +10,7 @@ const findUserAuth = async(username_or_email) => {
     try {
         await client.query("BEGIN")
         const searchUser = `
-            SELECT id, password, username, email, forget_password_token, forget_password_expire FROM public.user WHERE username = $1 OR email = $1;
+            SELECT id, password, username, email, forget_password_token, forget_password_expire, already_verified, profile_filled FROM public.user WHERE username = $1 OR email = $1;
         `
         const resultSession = await client.query(searchUser, [username_or_email]);
         client.release()
@@ -89,6 +89,40 @@ const checkTokenSession = async(id, token) => {
             other_error_message : null,
             sql_error_message : error.message,
             error : error,
+        }
+    } finally {
+        client.release()
+    }
+}
+
+/**
+ * @brief get informasi user
+ */
+const getUserInfo = async(id) => {
+    const client = await db.connect();
+    try {
+        const searchUser = `
+            SELECT id, username, email, already_verified, profile_filled, full_name, date_of_birth, gender, phone_number 
+            FROM public.user
+            WHERE id = $1
+            ;
+        `
+        const resultSession = await client.query(searchUser, [id]);
+        return {
+            is_error : false,
+            SQLResponse : resultSession,
+            error_message : null,
+            error : null,
+        }
+    } catch (error) {
+        
+        return {
+            is_error : true,
+            SQLResponse : null,
+            other_error_message : null,
+            sql_error_message : error.message,
+            error : error,
+            is_sql_error: true
         }
     } finally {
         client.release()
@@ -201,18 +235,17 @@ const insertOrUpdateNewSession = async(id_user, cookie_token, is_remember_me) =>
 
 /**
  * @param {string} id_user 
+ * @param {uuid} token
  * @brief delete token authentication
  */
-const deleteSession = async(id_user) => {
-
+const deleteSession = async(id_user, token) => {
+    //console.log(id_user, " ", token)
     const client = await db.connect();
     try {
-        await client.query("BEGIN")
         const delete_token = `
-            DELETE FROM user_session WHERE id_user = $1;
+            DELETE FROM user_session WHERE id_user = $1 AND token = $2;
         `
-        const resultSession = await client.query(delete_token, [id_user]);
-        await client.query("COMMIT")
+        const resultSession = await client.query(delete_token, [id_user, token]);
         client.release()
         return {
             is_error : false,
@@ -220,13 +253,14 @@ const deleteSession = async(id_user) => {
             error_message : null
         }
     } catch (error) {
-        await client.query("ROLLBACK")
         client.release()
         return {
             is_error : true,
             SQLResponse : null,
             other_error_message : null,
-            sql_error_message : error.message
+            sql_error_message : error.message,
+            is_sql_error: true,
+            error: error
         }
     }
 }
@@ -351,6 +385,32 @@ const updateForgetPasswordToken = async(forget_password_token, id_user) => {
     }
 }
 
+const updateVerifiedUser = async(activation_token) => {
+    const client = await db.connect();
+    try {
+        const futureTime = moment().tz("UTC").add(24, 'hours').format("YYYY-MM-DD HH:mm:ss");
+        const update_verification = `
+           UPDATE public.user SET already_verified = TRUE, activation_token = NULL WHERE activation_token = $1 RETURNING *;
+        `
+        let resultSession = await client.query(update_verification, [activation_token]);
+        client.release()
+        return {
+            is_error : false,
+            SQLResponse : resultSession,
+            error_message : null
+        }
+    } catch (error) {
+        client.release()
+        return {
+            is_error : true,
+            SQLResponse : null,
+            other_error_message : null,
+            sql_error_message : error.message,
+            sql_error : error
+        }
+    }
+}
+
 module.exports = {
     checkUserAlreadyExist,
     findUserAuth,
@@ -360,5 +420,7 @@ module.exports = {
     updateForgetPasswordToken,
     deleteSession,
     insertOrUpdateNewSession,
-    checkTokenSession
+    checkTokenSession,
+    updateVerifiedUser,
+    getUserInfo
 }
