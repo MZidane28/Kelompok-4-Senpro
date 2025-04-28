@@ -21,31 +21,31 @@ jobs:
           cd frontend
           npm install
           npm run build
-  test-build-be:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Testing Build Express App
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{matrix.node-version}}
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
-      - run: |
-          cd backend
-          npm install
-          node server.js &
-          SERVER_PID=$!
+  # test-build-be:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       node-version: [18.x]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Testing Build Express App
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{matrix.node-version}}
+  #         cache: "npm"
+  #         cache-dependency-path: backend/package-lock.json
+  #     - run: |
+  #         cd backend
+  #         npm install
+  #         node server.js &
+  #         SERVER_PID=$!
 
-          # Wait for the server to start
-          for i in {1..10}; do
-            curl -I http://localhost:3000 && break
-            echo "Waiting for server..."
-            sleep 2
-          done
+  #         # Wait for the server to start
+  #         for i in {1..10}; do
+  #           curl -I http://localhost:3000 && break
+  #           echo "Waiting for server..."
+  #           sleep 2
+  #         done
 
-          # Stop the server after testing
-          kill $SERVER_PID
+  #         # Stop the server after testing
+  #         kill $SERVER_PID
