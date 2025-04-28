@@ -10,9 +10,9 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Testing Build NextJS pre-Deploy
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.node-version}}
           cache: "npm"
@@ -27,9 +27,9 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Testing Build Express App
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.node-version}}
           cache: "npm"
