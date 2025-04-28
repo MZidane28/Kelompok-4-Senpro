@@ -16,9 +16,6 @@ if(process.env.DB_LOCAL == "TRUE") {
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
     connectionTimeoutMillis: 7500,
-    ssl: {
-      rejectUnauthorized: false,  // Disables SSL certificate verification
-    },
   });
 } else {
   console.log("USE DB SERVER")

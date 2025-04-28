@@ -13,13 +13,17 @@ CREATE TABLE IF NOT EXISTS public.user
     username text UNIQUE NOT NULL,
     password text NOT NULL,
     email text UNIQUE NOT NULL,
-    phone_number UNIQUE text,
+    phone_number text,
     gender gender_type,
     date_of_birth DATE,
     full_name text,
-    forget_password_token UNIQUE DEFAULT NULL,
-    forget_password_expire TIMESTAMP,
-    CONSTRAINT id_primary_user PRIMARY KEY (id)
+    already_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    profile_filled BOOLEAN NOT NULL DEFAULT FALSE,
+    activation_token uuid UNIQUE DEFAULT gen_random_uuid(),
+    forget_password_token uuid,  -- Define the column without UNIQUE first
+    forget_password_expire TIMESTAMP not null default current_timestamp + interval '1 day',
+    CONSTRAINT id_primary_user PRIMARY KEY (id),
+    CONSTRAINT unique_forget_password_token UNIQUE (forget_password_token) -- Apply UNIQUE constraint correctly
 );
 
 CREATE TABLE IF NOT EXISTS public.chat_session
@@ -83,10 +87,12 @@ CREATE TABLE IF NOT EXISTS public.professional_contacts
 CREATE TABLE IF NOT EXISTS public.user_session
 (
     id_user bigint NOT NULL,
-    token text NOT NULL,
+    token uuid not null UNIQUE DEFAULT gen_random_uuid(),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    CONSTRAINT id_primary_user_session  PRIMARY KEY (id_user, token, created_at)
+    last_used TIMESTAMP NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    is_valid BOOLEAN DEFAULT TRUE,
+    CONSTRAINT id_primary_user_session  PRIMARY KEY (id_user, token, created_at),
     CONSTRAINT 
         fk_user_session_user_id  FOREIGN KEY (id_user)
         REFERENCES public.user (id)
