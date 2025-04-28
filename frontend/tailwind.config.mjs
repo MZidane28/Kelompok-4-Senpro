@@ -8,8 +8,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        black: "#4A4A4A",
+        white: "#FFFFFF",
+        "mint-green": "#C5E1A5",
+        "soft-yellow": "#FCEEB5"
+      },
+      fontFamily: {
+        poppins: ['var(--font-poppins)', 'sans-serif'],
+        spaceGrotesk: ['var(--font-space-grotesk)', 'sans-serif'],
       },
     },
   },
