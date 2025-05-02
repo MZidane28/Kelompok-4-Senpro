@@ -8,7 +8,7 @@ const corsConfig = require("./configs/corsConfig")
 
 
 const app = express();
-const PORT = 3000;
+const PORT = 3500;
 
 app.use(cors(corsConfig()));
 app.use(cookieParser());
