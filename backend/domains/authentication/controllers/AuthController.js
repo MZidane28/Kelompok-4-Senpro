@@ -7,6 +7,7 @@ const moment = require('moment-timezone');
 
 const AuthQuery = require("../query/AuthQuery")
 const ForgetPasswordQuery = require("../query/ForgetPasswordQuery");
+const { send_mail } = require('../../../utils/azure-nodemailer-service');
 
 const timezone = process.env.MOMENT_TIMEZONE;
 
@@ -136,7 +137,7 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
 
     // insert token forget password (Jika sudah ada, suruh cek email lagi)
     const updateForgetTokenQuery = await ForgetPasswordQuery.insertNewToken(userData.email);
-    console.log(updateForgetTokenQuery);
+    //console.log(updateForgetTokenQuery);
     if(updateForgetTokenQuery.is_error || updateForgetTokenQuery.is_sql_error) {
         throw Error(updateForgetTokenQuery.sql_error_message || updateForgetTokenQuery.other_error_message);
     }
@@ -261,6 +262,20 @@ const getUserInformation = asyncHandler( async(req,res,next) => {
     return res.status(200).json({message : "User tervalidasi", user: {...user_data_query}})
 })
 
+/**
+ * GET /auth/send-mail
+ * informasi user
+*/
+const sendMail = asyncHandler( async(req,res,next) => {
+    const send = await send_mail(`<html>
+				<body>
+					<h1>Hello world via email.</h1>
+				</body>
+			</html>`, 'wafiafdi@gmail.com', "Something")
+
+    return res.status(200).json({message : "JALAN"})
+})
+
 module.exports = {
     ensureUser,
     loginUser,
@@ -269,6 +284,6 @@ module.exports = {
     forgetPasswordChange,
     forgetPasswordSend,
     activateAccount,
-    getUserInformation
-    
+    getUserInformation,
+    sendMail
 }

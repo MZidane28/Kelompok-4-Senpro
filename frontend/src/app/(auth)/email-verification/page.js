@@ -12,22 +12,11 @@ function page() {
                 height={222}
             />
             <h1 className='font-bold font-poppins text-4xl mt-4'>
-                Your Email Has Been Verified!
+                Thank you for signing up!
             </h1>
             <p className='font-poppins text-xl mt-6'>
-                Thank you for signing up! You can return the login screen by clicking below:
+                Check your email for email verification
             </p>
-            <NormalButton
-                background_color='bg-soft-yellow'
-                text='Log In to Your Account'
-                custom_className='mt-6 py-2'
-                is_submit={false}
-                is_redirect={true}
-                redirect_link='/login'
-                width_className='w-full max-w-[300px]'
-                font_size='text-xl'
-
-            />
         </main>
     )
 }
