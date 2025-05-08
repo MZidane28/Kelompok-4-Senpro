@@ -1,5 +1,5 @@
 'use client'
-import React, { useState} from 'react'
+import React, { useState, Suspense} from 'react'
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -8,6 +8,8 @@ import NormalButton from '../buttons/normalButton'
 
 import { toast_message } from '@/utils/toast-utils';
 import { useSearchParams } from 'next/navigation'
+
+
 
 
 function ChangePasswordForm() {
