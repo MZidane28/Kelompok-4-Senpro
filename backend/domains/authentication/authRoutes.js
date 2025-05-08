@@ -8,7 +8,7 @@ router.route('/send-mail').get(AuthController.sendMail)
 router.route('/logout').patch(AuthController.logoutUser)
 router.route('/ensure-user').get(AuthMiddleware.MiddlewareEnsureUser, AuthController.ensureUser)
 router.route('/register').post(AuthController.registerUser)
-router.route('/activate/:token').patch(AuthController.activateAccount)
+router.route('/activate/:token').get(AuthController.activateAccount)
 router.route('/user-info').get(AuthMiddleware.MiddlewareEnsureUser, AuthController.getUserInformation)
 
 router.route('/forget-password').post(AuthController.forgetPasswordSend)

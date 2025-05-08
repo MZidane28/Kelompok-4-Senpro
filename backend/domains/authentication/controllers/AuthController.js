@@ -17,7 +17,7 @@ const timezone = process.env.MOMENT_TIMEZONE;
 */
 const ensureUser = asyncHandler( async(req,res,next) => {
     //console.log("USER : ", req.user)
-    return res.status(200).json({message : "User terautorisasi"})
+    return res.status(200).json({message : "User authorized"})
 })
 
 /**
@@ -41,19 +41,19 @@ const loginUser = asyncHandler( async(req,res,next) => {
     if(checkUserResponse.sql_error_message) {
         throw new Error(checkUserResponse.sql_error_message);
     } else if (checkUserResponse.SQLResponse?.rowCount == 0) {
-        return res.status(401).json({message : "Email atau username tidak ditemukan"})
+        return res.status(401).json({message : "Email or username not found"})
     } 
     const userData = checkUserResponse.SQLResponse.rows[0];
 
     // cek password
     const isPasswordCorrect = await bcrypt.compare(password, checkUserResponse.SQLResponse?.rows[0].password);
     if(!isPasswordCorrect) {
-        return res.status(401).json({message : "Password salah"})
+        return res.status(401).json({message : "Password is incorrect"})
     }
 
     // cek juga sudah terverifikasi
     if(userData.already_verified == false) {
-        return res.status(401).json({message : "Akun belum terverifikasi melewati email", is_verified : false})
+        return res.status(401).json({message : "Account not yet verified", is_verified : false})
     }
 
 
@@ -63,7 +63,7 @@ const loginUser = asyncHandler( async(req,res,next) => {
         throw new Error(userTokenQuery?.sql_error_message);
     }
     if(userTokenQuery?.SQLResponse.rowCount <= 0) {
-        return res.status(500).json({message : "Tolong login beberapa saat lagi"})
+        return res.status(500).json({message : "Try login later"})
     }
     const token_response = userTokenQuery?.SQLResponse.rows[0].token
 
@@ -87,7 +87,7 @@ const loginUser = asyncHandler( async(req,res,next) => {
         cookieConfig
     )
 
-    return res.status(200).json({message : "Login berhasil"})
+    return res.status(200).json({message : "Login successful"})
 })
 
 /**
@@ -102,7 +102,7 @@ const registerUser = asyncHandler( async(req,res,next) => {
     if(checkUserResponse.sql_error_message) {
         throw new Error(checkUserResponse.sql_error_message);
     } else if (checkUserResponse.SQLResponse?.rowCount) {
-        return res.status(401).json({message : "Email atau username sudah teregistrasi"})
+        return res.status(401).json({message : "Email or username has been registered"})
     }
 
     // hash pwd
@@ -114,7 +114,7 @@ const registerUser = asyncHandler( async(req,res,next) => {
     // send email
 
 
-    return res.status(200).json({message : "User berhasil teregistrasi"})
+    return res.status(200).json({message : "User successfully registered"})
 })
 
 /**
@@ -130,7 +130,7 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
         throw Error(searchEmailQuery.sql_error_message || searchEmailQuery.other_error_message);
     }
     if(searchEmailQuery.SQLResponse.rowCount <= 0 ) {
-        return res.status(404).json({message: "Email tidak ditemukan"})
+        return res.status(404).json({message: "Email not found"})
     }
 
     const userData = searchEmailQuery.SQLResponse.rows[0]
@@ -144,7 +144,7 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
 
     // send email
 
-    return res.status(200).json({message : "Sukses, sudah terkirim ke email"})
+    return res.status(200).json({message : "Password reset has been sent to email"})
 })
 
 /**
@@ -160,7 +160,7 @@ const forgetPasswordChange = asyncHandler( async(req,res,next) => {
         throw Error(searchUserPasswordToken.sql_error_message || searchUserPasswordToken.other_error_message);
     }
     if(searchUserPasswordToken.SQLResponse.rowCount <= 0 ) {
-        return res.status(404).json({message: "Token tidak valid"})
+        return res.status(404).json({message: "Token is not valid"})
     }
 
     const user_data = searchUserPasswordToken.SQLResponse.rows[0]
@@ -168,10 +168,10 @@ const forgetPasswordChange = asyncHandler( async(req,res,next) => {
     const now = moment.tz(timezone);
 
     if(now.isAfter(time_expire)) {
-        return res.status(401).json({message : "Token sudah expire"})
+        return res.status(401).json({message : "Token has expire"})
     }
     if(email != user_data.email) {
-        return res.status(401).json({message : "Token tidak valid untuk email ini"})
+        return res.status(401).json({message : "Token is not valid for this email"})
     }
 
     // insert password baru dan delete password lama
@@ -182,7 +182,7 @@ const forgetPasswordChange = asyncHandler( async(req,res,next) => {
     }
 
 
-    return res.status(200).json({message : "Sukses, sudah berhasil mengubah password"})
+    return res.status(200).json({message : "Password has been changed successfully"})
 })
 
 /**
@@ -207,7 +207,7 @@ const logoutUser = asyncHandler( async(req,res,next) => {
         deleteSessionQuery = await AuthQuery.deleteSession(credential.id, credential.token)
         if(deleteSessionQuery.is_sql_error || deleteSessionQuery.is_error) {
             console.log(deleteSessionQuery.error)
-            return res.status(500).json({message : "Telah terjadikan kesalahan saat hapus session, mohon logout lagi"})
+            return res.status(500).json({message : "Please logout again, a problem has occured"})
         }
     }
     //console.log(deleteSessionQuery)
@@ -215,11 +215,11 @@ const logoutUser = asyncHandler( async(req,res,next) => {
     // Hapus cookies
     res.clearCookie(process.env.COOKIE_NAME, {...cookieConfig, maxAge: 0});
 
-    return res.status(200).json({message : "User berhasil logout"})
+    return res.status(200).json({message : "User successfully logout"})
 })
 
 /**
- * PATCH /auth/activate
+ * GET /auth/activate
  * aktifkan akun
 */
 const activateAccount = asyncHandler( async(req,res,next) => {
@@ -233,11 +233,10 @@ const activateAccount = asyncHandler( async(req,res,next) => {
     }
 
     if(updateVerificationQuery.rowCount == 0) {
-        return res.status(404).json({message : "Token verifikasi tidak valid"})
+        return res.status(404).json({message : "Verification token not valid"})
     }
 
-
-    return res.status(200).json({message : "User teverifikasi"})
+    return res.redirect(process.env.FE_URL + "/email-verified")
 })
 
 /**
@@ -255,16 +254,16 @@ const getUserInformation = asyncHandler( async(req,res,next) => {
     }
 
     if(getUserInfoQuery.rowCount == 0) {
-        return res.status(404).json({message : "User tidak ditemukan", is_error : true})
+        return res.status(404).json({message : "User not found", is_error : true})
     }
     const user_data_query = getUserInfoQuery.SQLResponse.rows[0]
 
-    return res.status(200).json({message : "User tervalidasi", user: {...user_data_query}})
+    return res.status(200).json({message : "User is valid", user: {...user_data_query}})
 })
 
 /**
  * GET /auth/send-mail
- * informasi user
+ * test send email
 */
 const sendMail = asyncHandler( async(req,res,next) => {
     const send = await send_mail(`<html>
