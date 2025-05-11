@@ -7,7 +7,7 @@ const moment = require('moment-timezone');
 
 const AuthQuery = require("../query/AuthQuery")
 const ForgetPasswordQuery = require("../query/ForgetPasswordQuery");
-const { send_mail } = require('../../../utils/azure-nodemailer-service');
+const { send_activation_email, send_password_reset } = require('../../../utils/nodemailer-service');
 
 const timezone = process.env.MOMENT_TIMEZONE;
 
@@ -111,10 +111,14 @@ const registerUser = asyncHandler( async(req,res,next) => {
     // insert user
     const insertUserResponse = await AuthQuery.insertNewUser(username, email, hashPWD);
 
+    // new user data
+    const newUserData = insertUserResponse.SQLResponse.rows[0]
+
     // send email
+    const sendActivationEmail = send_activation_email(newUserData.email, newUserData.activation_token)
 
 
-    return res.status(200).json({message : "User successfully registered"})
+    return res.status(200).json({message : "User successfully registered, check your email"})
 })
 
 /**
@@ -143,6 +147,7 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
     }
 
     // send email
+    const sendPasswordResetEmail = send_password_reset(userData.email, userData.forget_password_token)
 
     return res.status(200).json({message : "Password reset has been sent to email"})
 })
@@ -266,11 +271,6 @@ const getUserInformation = asyncHandler( async(req,res,next) => {
  * test send email
 */
 const sendMail = asyncHandler( async(req,res,next) => {
-    const send = await send_mail(`<html>
-				<body>
-					<h1>Hello world via email.</h1>
-				</body>
-			</html>`, 'wafiafdi@gmail.com', "Something")
 
     return res.status(200).json({message : "JALAN"})
 })

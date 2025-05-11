@@ -17,6 +17,17 @@ function page() {
             <p className='font-poppins text-xl mt-6'>
                 Check your email for email verification
             </p>
+            <NormalButton
+                background_color='bg-soft-yellow'
+                text='Back to Login'
+                custom_className='mt-6 py-2'
+                is_submit={false}
+                is_redirect={true}
+                redirect_link='/login'
+                width_className='w-full max-w-[300px]'
+                font_size='text-xl'
+            
+            />
         </main>
     )
 }
