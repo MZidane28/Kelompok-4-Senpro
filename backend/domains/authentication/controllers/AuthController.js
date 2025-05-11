@@ -30,9 +30,14 @@ const loginUser = asyncHandler( async(req,res,next) => {
     // cek cookies jika ada 
     let token_cookies = null;
     if(req.cookies[process.env.COOKIE_NAME]) {
-        const credential = jwt.verify(req.cookies[process.env.COOKIE_NAME], process.env.JWT_SECRET || "secret");
-        if(credential) {
-            token_cookies = credential.token
+        let credentials = null;
+        try {
+            credentials = jwt.verify(req.cookies[process.env.COOKIE_NAME], process.env.JWT_SECRET || "secret");
+        } catch (error) {
+            //console.log(error)
+        }
+        if(credentials) {
+            token_cookies = credentials.token
         }
     }
 

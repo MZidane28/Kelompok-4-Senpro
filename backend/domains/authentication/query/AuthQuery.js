@@ -68,7 +68,7 @@ const checkTokenSession = async(id, token) => {
     const client = await db.connect();
     try {
         const searchUserToken = `
-            SELECT public.user.id, public.user.username, public.user.email, public.user.already_verified, public.user.profile_filled, user_session.token 
+            SELECT public.user.id, public.user.username, public.user.email, public.user.already_verified, public.user.profile_filled, user_session.token, user_session.expires_at
             FROM public.user_session 
             JOIN public.user ON public.user.id = user_session.id_user
             WHERE id_user = $1 AND token = $2

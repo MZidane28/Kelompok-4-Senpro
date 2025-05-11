@@ -31,12 +31,16 @@ const MiddlewareEnsureUser = asyncHandler( async(req,res,next) => {
         return res.status(401).json({message : "session tidak terotorisasi"})
     }
     const dataUser = searchTokenQuery.SQLResponse.rows[0];
+    //console.log(searchTokenQuery.SQLResponse.rows)
 
     const timezone = process.env.MOMENT_TIMEZONE
     const time_expire = moment.tz(dataUser.expires_at, timezone)
     const now = moment.tz(timezone);
     
     if(now.isAfter(time_expire)) {
+        //console.log("TIME : ", time_expire, dataUser.expires_at)
+        //console.log("NOW : ", now)
+
         return res.status(401).json({message : "Session sudah expire"})
     }
 
