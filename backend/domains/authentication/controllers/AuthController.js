@@ -137,14 +137,14 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
         return res.status(404).json({message: "Email not found"})
     }
 
-    const userData = searchEmailQuery.SQLResponse.rows[0]
-
     // insert token forget password (Jika sudah ada, suruh cek email lagi)
     const updateForgetTokenQuery = await ForgetPasswordQuery.insertNewToken(userData.email);
     //console.log(updateForgetTokenQuery);
     if(updateForgetTokenQuery.is_error || updateForgetTokenQuery.is_sql_error) {
         throw Error(updateForgetTokenQuery.sql_error_message || updateForgetTokenQuery.other_error_message);
     }
+
+    const userData = updateForgetTokenQuery.SQLResponse.rows[0]
 
     // send email
     const sendPasswordResetEmail = send_password_reset(userData.email, userData.forget_password_token)
