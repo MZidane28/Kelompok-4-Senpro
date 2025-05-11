@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
     res.send('<h1>Server is ON</h1>');
   });
 app.use('/auth', require('./domains/authentication/authRoutes'))
+app.use('/chat', require('./domains/chat/chatRoutes'))
 
 
 // Start server
