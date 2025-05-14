@@ -18,7 +18,7 @@ function NormalButton({
     if(is_redirect) {
         return (
             <a href={redirect_link}
-                className={twMerge('py-1 font-spaceGrotesk border-2 border-black text-center', 
+                className={twMerge('py-1 font-spaceGrotesk border-2 font-bold border-black text-center', 
                     font_size, background_color, custom_className, width_className, rounderCorner_className)}
                 onClick={onClick}
             >
@@ -28,7 +28,7 @@ function NormalButton({
     } else {
         return (
             <button type={is_submit ? 'submit': 'button'}
-                className={twMerge('py-1 font-spaceGrotesk border-2 border-black text-center', 
+                className={twMerge('py-1 font-spaceGrotesk border-2 font-bold border-black text-center', 
                     font_size, background_color, custom_className, width_className, rounderCorner_className)}
                 onClick={onClick}
             >
