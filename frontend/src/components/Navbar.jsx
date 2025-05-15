@@ -33,6 +33,7 @@ export default function Navbar() {
           alt="Empati Logo"
           width={120}
           height={32}
+          style={{ height: "auto" }}
         />
       </div>
 
