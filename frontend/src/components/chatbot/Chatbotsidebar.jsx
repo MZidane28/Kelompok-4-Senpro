@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 const initialData = {
   today: [],
   yesterday: [],
-  past7days: [],
+  past7days: ['Talked about anxiety with the bot 🧠'],
   past30days: [],
 };
 
@@ -15,7 +15,7 @@ function Sidebar() {
   const handleNewChat = () => {
     const newSessionId = crypto.randomUUID();
     setCurrentSessionId(newSessionId);
-    // Title gets added after the user sends first message — handled elsewhere
+    // Title gets added after the user sends first message
   };
 
   const handleFirstMessage = async (msg) => {
@@ -23,49 +23,50 @@ function Sidebar() {
     formData.append("msg", msg);
     formData.append("session_id", currentSessionId);
 
-    // Save message
     await fetch("http://localhost:8080/embedding", {
       method: "POST",
       body: formData,
     });
 
-    // Generate title
     const titleRes = await fetch("http://localhost:8080/title", {
       method: "POST",
       body: formData,
     });
-    const titleData = await titleRes.json();
-    const title = titleData.title;
+    const title = (await titleRes.json()).title;
 
-    // Add to "Today"
-    setChatTitles(prev => ({
+    setChatTitles((prev) => ({
       ...prev,
       today: [...prev.today, title],
     }));
   };
 
-  const renderSection = (title, items) => (
-    <div className="mb-4">
-      <h4 className="text-xs font-semibold text-gray-500 mb-2">{title}</h4>
-      {items.map((item, index) => (
-        <input
-          key={index}
-          type="text"
-          defaultValue={item}
-          className="block w-full mb-2 p-2 rounded border border-black text-sm bg-[#FFFBF2] focus:outline-none focus:ring-2 focus:ring-[#D9D9D9]"
-        />
-      ))}
-    </div>
-  );
+  const renderSection = (title, items) =>
+    items.length > 0 && (
+      <div className="mb-2">
+        <h4 className="text-xs text-gray-500 font-semibold mb-1">{title}</h4>
+        <div className="space-y-1">
+          {items.map((item, index) => (
+            <input
+              key={index}
+              type="text"
+              defaultValue={item}
+              className="w-full p-1 text-xs rounded border border-gray-400 bg-[#FFFBF2] focus:outline-none focus:ring-1 focus:ring-[#D9D9D9]"
+            />
+          ))}
+        </div>
+      </div>
+    );
 
   return (
-    <div className="w-72 p-4 bg-[#FFFBF2] border-r border-gray-300 h-screen font-poppins">
-      <h2 className="text-xl font-bold mb-1">Chatbot</h2>
-      <p className="text-sm mb-4 text-gray-600">Chat for support, guidance, and self-reflection</p>
+    <div className="w-64 p-3 bg-[#FFFBF2] border-r border-gray-300 h-screen overflow-y-auto font-poppins">
+      <h2 className="text-lg font-bold mb-1">Chatbot</h2>
+      <p className="text-xs mb-3 text-gray-600 leading-snug">
+        Support, guidance, self-reflection.
+      </p>
       <input
         type="text"
         placeholder="Search"
-        className="w-full mb-4 p-2 border border-gray-400 rounded"
+        className="w-full mb-3 p-2 text-sm border border-gray-400 rounded"
       />
       {renderSection("Today", chatTitles.today)}
       {renderSection("Yesterday", chatTitles.yesterday)}
@@ -73,9 +74,9 @@ function Sidebar() {
       {renderSection("Previous 30 Days", chatTitles.past30days)}
       <button
         onClick={handleNewChat}
-        className="mt-4 w-full bg-[#FCEEB5] text-black p-2 rounded-full hover:bg-[#ebdfaa] transition font-semibold"
+        className="mt-3 w-full bg-[#FCEEB5] text-black p-2 text-sm rounded-full hover:bg-[#ebdfaa] transition font-semibold"
       >
-        New Chat
+        + New Chat
       </button>
     </div>
   );

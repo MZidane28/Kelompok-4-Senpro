@@ -26,8 +26,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${space_grotesk.variable} ${poppins.variable} antialiased font-spaceGrotesk`}
       >
-        <Navbar />
-        {children}
+        <Navbar className="sticky top-0 z-50" />
+        <main>{children}</main>
         <ToastProvider />
       </body>
     </html>
