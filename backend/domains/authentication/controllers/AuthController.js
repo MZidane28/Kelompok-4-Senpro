@@ -7,7 +7,7 @@ const moment = require('moment-timezone');
 
 const AuthQuery = require("../query/AuthQuery")
 const ForgetPasswordQuery = require("../query/ForgetPasswordQuery");
-const { send_mail } = require('../../../utils/azure-nodemailer-service');
+const { send_activation_email, send_password_reset } = require('../../../utils/nodemailer-service');
 
 const timezone = process.env.MOMENT_TIMEZONE;
 
@@ -30,9 +30,14 @@ const loginUser = asyncHandler( async(req,res,next) => {
     // cek cookies jika ada 
     let token_cookies = null;
     if(req.cookies[process.env.COOKIE_NAME]) {
-        const credential = jwt.verify(req.cookies[process.env.COOKIE_NAME], process.env.JWT_SECRET || "secret");
-        if(credential) {
-            token_cookies = credential.token
+        let credentials = null;
+        try {
+            credentials = jwt.verify(req.cookies[process.env.COOKIE_NAME], process.env.JWT_SECRET || "secret");
+        } catch (error) {
+            //console.log(error)
+        }
+        if(credentials) {
+            token_cookies = credentials.token
         }
     }
 
@@ -111,10 +116,14 @@ const registerUser = asyncHandler( async(req,res,next) => {
     // insert user
     const insertUserResponse = await AuthQuery.insertNewUser(username, email, hashPWD);
 
+    // new user data
+    const newUserData = insertUserResponse.SQLResponse.rows[0]
+
     // send email
+    const sendActivationEmail = send_activation_email(newUserData.email, newUserData.activation_token)
 
 
-    return res.status(200).json({message : "User successfully registered"})
+    return res.status(200).json({message : "User successfully registered, check your email"})
 })
 
 /**
@@ -133,8 +142,6 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
         return res.status(404).json({message: "Email not found"})
     }
 
-    const userData = searchEmailQuery.SQLResponse.rows[0]
-
     // insert token forget password (Jika sudah ada, suruh cek email lagi)
     const updateForgetTokenQuery = await ForgetPasswordQuery.insertNewToken(userData.email);
     //console.log(updateForgetTokenQuery);
@@ -142,7 +149,10 @@ const forgetPasswordSend = asyncHandler( async(req,res,next) => {
         throw Error(updateForgetTokenQuery.sql_error_message || updateForgetTokenQuery.other_error_message);
     }
 
+    const userData = updateForgetTokenQuery.SQLResponse.rows[0]
+
     // send email
+    const sendPasswordResetEmail = send_password_reset(userData.email, userData.forget_password_token)
 
     return res.status(200).json({message : "Password reset has been sent to email"})
 })
@@ -266,11 +276,6 @@ const getUserInformation = asyncHandler( async(req,res,next) => {
  * test send email
 */
 const sendMail = asyncHandler( async(req,res,next) => {
-    const send = await send_mail(`<html>
-				<body>
-					<h1>Hello world via email.</h1>
-				</body>
-			</html>`, 'wafiafdi@gmail.com', "Something")
 
     return res.status(200).json({message : "JALAN"})
 })

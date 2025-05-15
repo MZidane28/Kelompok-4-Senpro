@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS public.chat_logs
     fk_chat_id bigint NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     message text NOT NULL,
-    sender status_sender NOT NULL,
+    ai_response text,
     CONSTRAINT id_primary_chat_logs  PRIMARY KEY (fk_chat_id, created_at),
     CONSTRAINT 
         fk_chat_logs_chat_id  FOREIGN KEY (fk_chat_id)

@@ -12,6 +12,7 @@ html, body {
   height: 100%;
   width: 100%;
   font-family: var(--font-poppins), sans-serif; /* optional if using your font */
+  overflow-x: hidden;
 }
 
 ul, ol {
