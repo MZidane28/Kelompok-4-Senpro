@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-cream">
       {/* Use the Navbar component  */}
-      <Navbar />
       {/* Hero Section */}
       <section id="home" className="relative py-16 overflow-hidden">
         <div className="container mx-auto relative z-10">

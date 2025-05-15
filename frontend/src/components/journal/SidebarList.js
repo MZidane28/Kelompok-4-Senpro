@@ -12,9 +12,9 @@ function SidebarList() {
 
     return (
         <div className='
-            fixed z-10 left-3 top-5
+            fixed z-10 left-3 top-5 mt-16
             border-2 border-black 
-            h-full max-h-[95%] max-w-[368px]
+            h-full max-h-[86%] max-w-[368px]
             p-8 text-left
             flex flex-col
             bg-white

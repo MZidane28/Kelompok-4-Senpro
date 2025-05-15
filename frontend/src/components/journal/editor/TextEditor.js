@@ -21,7 +21,7 @@ function TextEditor({
         <div className='w-full h-full flex flex-col'>
 
             <textarea className={
-                twMerge('w-full min-h-[400px] mt-2'
+                twMerge('w-full min-h-[280px] mt-2'
                     , 'bg-floral-white'
                     , 'resize-none grow'
                     , 'outline-soft-yellow text-base'

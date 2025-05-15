@@ -1,6 +1,7 @@
 import { Poppins, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/context/ToastProvider";
+import Navbar from "@/components/Navbar";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${space_grotesk.variable} ${poppins.variable} antialiased font-spaceGrotesk`}
       >
+        <Navbar />
         {children}
         <ToastProvider />
       </body>

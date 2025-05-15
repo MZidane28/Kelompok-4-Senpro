@@ -8,7 +8,6 @@ const ChatBot = dynamic(() => import('@/components/chatbot/chatBot'), {
 function Page() {
   return (
     <div className="flex flex-col h-screen">
-      <Navbar />
       <main className="flex flex-1 h-full overflow-hidden">
         <Sidebar />
         <div className="flex flex-col flex-1 h-full overflow-hidden">
