@@ -1,7 +1,10 @@
-import ChatBot from "@/components/chatbot/chatBot";
+'use client';
 import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Chatbotsidebar";
-
+import Sidebar from "@/components/chatbot/Chatbotsidebar";
+import dynamic from 'next/dynamic';
+const ChatBot = dynamic(() => import('@/components/chatbot/chatBot'), {
+  ssr: false,
+});
 function Page() {
   return (
     <div className="flex flex-col h-screen">
