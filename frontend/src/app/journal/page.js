@@ -1,13 +1,17 @@
 import React from 'react'
 import SidebarList from '@/components/journal/SidebarList'
 import Journalayout from '@/components/journal/JournalLayout'
+import { JournalProvider } from '@/context/JournalContext'
 
 function page() {
     return (
-        <div className='w-screen h-[screen] bg-floral-white'>
-            <SidebarList/>
-            <Journalayout />
-        </div>
+        <JournalProvider>
+            <div className='w-screen min-h-[screen] bg-floral-white overflow-x-hidden'>
+                <SidebarList />
+                <Journalayout />
+            </div>
+        </JournalProvider>
+
     )
 }
 

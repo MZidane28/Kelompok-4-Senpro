@@ -10,7 +10,7 @@ async function createCollection() {
         console.log("Empati exist in QDrant")
     } else {
         await client.createCollection("empati", {
-            vectors: { size: 384, distance: "Cosine" },
+            vectors: { size: 324, distance: "Cosine" },
         });
 
         await client.createPayloadIndex("empati", {

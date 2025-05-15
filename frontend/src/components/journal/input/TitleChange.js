@@ -1,60 +1,73 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react'
 import { FaEdit, FaCheck } from 'react-icons/fa' // using react-icons
+import { twMerge } from 'tailwind-merge'
 
-function TitleChange() {
+function TitleChange({
+    title = "",
+    SetTitle = () => {}
+}) {
     const [isEditing, setIsEditing] = useState(false)
-    const [title, setTitle] = useState('My Title')
     const spanRef = useRef(null)
     const inputRef = useRef(null)
-    const [inputWidth, setInputWidth] = useState(0)
+    const [inputWidth, setInputWidth] = useState(`${title.length}ch`)
 
     useEffect(() => {
-        if (spanRef.current) {
-            setInputWidth(spanRef.current.offsetWidth + 10) // extra padding
+        if(inputRef.current) {
+            if(isEditing == false) {
+                inputRef.current.style.width = '0ch'
+                setInputWidth('0ch')
+            }
+            else if(title.length < 1) {
+                inputRef.current.style.width = inputRef.current.placeholder.length + 'ch'
+                setInputWidth(inputRef.current.placeholder.length+'ch')
+            }
+            else if(title.length > 30) {
+                inputRef.current.style.width = "30" + 'ch'
+                setInputWidth("30" + 'ch')
+            } 
+            else {
+                inputRef.current.style.width = title.length + 'ch'
+                setInputWidth(title.length + 'ch')
+            }
         }
     }, [title])
 
     const handleToggleEdit = () => {
-        setIsEditing(prev => !prev)
+        setIsEditing(prev => {
+            if(prev == false) {
+                    inputRef.current?.focus();
+            } else {
+            }
+            return !prev
+        })
+        
     }
 
     const handleChange = (e) => {
-        setTitle(e.target.value)
+        SetTitle(e.target.value)
     }
 
     return (
-        <div className="flex items-center gap-2">
-            {isEditing ? (
-                <>
+        <div className="flex items-center gap-2 max-w-[600px] text-ellipsis sticky top-0">
                     <input
                         type="text"
                         value={title}
                         onChange={handleChange}
-                        className="none border-none outline-none bg-transparent underline
-                        font-spaceGrotesk font-bold text-3xl
-                    "
+                        className={twMerge(`none border-none outline-none bg-transparent underline
+                            font-spaceGrotesk font-bold text-3xl`
+                        )}
                         ref={inputRef}
-                        style={{ width: `${inputWidth}px` }}
+                        style={{width: isEditing ? `${inputWidth}` : `0ch`}}
+                        placeholder='New Title'
                     />
-                    <span
-                        ref={spanRef}
-                        className="invisible absolute whitespace-pre px-2"
-                        style={{ fontSize: '1rem' }}
-                    >
-                        {title || ' '}
-                    </span>
-                </>
-
-            ) : (
                 <h2
-                    className='font-spaceGrotesk font-bold text-3xl'
-                >{title}
+                    className={twMerge('font-spaceGrotesk font-bold text-3xl truncate', isEditing ? "hidden" : "block", title ? "" : "text-gray-600")}
+                >{title ? title : "Insert Title"}
                 </h2>
-            )}
-            <button onClick={handleToggleEdit} className="text-black-500">
+            <span onClick={handleToggleEdit} className="text-black-500 flex-shrink-0">
                 {isEditing ? <FaCheck /> : <FaEdit />}
-            </button>
+            </span>
         </div>
     )
 }
