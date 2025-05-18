@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("test");
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
