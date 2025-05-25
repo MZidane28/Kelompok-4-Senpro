@@ -6,7 +6,12 @@ import { useJournalContext } from '@/context/JournalContext';
 import AIResponse from './input/AIResponse';
 
 function JournalEditor() {
-    const { setActiveInputJournal, active_input_journal, saveJournal, RequestAIResponse } = useJournalContext();
+    const { setActiveInputJournal, active_input_journal, 
+        saveJournal, RequestAIResponse, 
+        selectedTitle, deleteJournal,
+        
+    } 
+    = useJournalContext();
 
     function ChangeTitle(data) {
         setActiveInputJournal((old) => {
@@ -40,7 +45,9 @@ function JournalEditor() {
                 onChangeMood={ChangeMood}
                 mood={active_input_journal?.mood}
                 onSave={() => saveJournal(active_input_journal)}
+                onDelete={() => deleteJournal()}
                 onAIReader={() => RequestAIResponse()}
+                is_new={selectedTitle == null}
             />
             <AIResponse ai_response={active_input_journal?.ai_response}/>
         </div>

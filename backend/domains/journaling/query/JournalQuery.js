@@ -140,7 +140,7 @@ const GetJournalUser = async (user_id) => {
     const client = await db.connect();
     try {
         const searchJournal = `
-            SELECT * FROM journal_session WHERE user_id = $1 ORDER BY last_edited DESC;
+            SELECT id, journal_title, last_edited FROM journal_session WHERE user_id = $1 ORDER BY last_edited DESC;
         `
         const resultSession = await client.query(searchJournal, [user_id]);
         return {

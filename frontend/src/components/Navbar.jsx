@@ -3,11 +3,15 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAuth } from '@/context/AuthContext';
+
 export default function Navbar() {
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
+  const { loading, user, fetchUser } = useAuth();
+
+  /* useEffect(() => {
     if (typeof window !== 'undefined') {
       const userData = localStorage.getItem('user');
       const imageData = localStorage.getItem('profileImage');
@@ -20,7 +24,7 @@ export default function Navbar() {
         setProfileImage(imageData);
       }
     }
-  }, []);
+  }, []); */
 
 
   return (
@@ -48,7 +52,7 @@ export default function Navbar() {
         {user ? (
           <>
             <div className="px-3 py-1 border-[3px] border-black rounded-[5px] text-md">
-              {user.name}
+              {user.username}
             </div>
             <Link href="/profile">
               {profileImage ? (
