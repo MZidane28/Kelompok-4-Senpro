@@ -1,6 +1,7 @@
 import { Poppins, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/context/ToastProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 
 const poppins = Poppins({
@@ -26,9 +27,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${space_grotesk.variable} ${poppins.variable} antialiased font-spaceGrotesk`}
       >
-        <Navbar className="sticky top-0 z-50" />
-        <main>{children}</main>
-        <ToastProvider />
+        <AuthProvider>
+          <Navbar className="sticky top-0 z-50" />
+          <main>{children}</main>
+          <ToastProvider />
+        </AuthProvider>
+
       </body>
     </html>
   );

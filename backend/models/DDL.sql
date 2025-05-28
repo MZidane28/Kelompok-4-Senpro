@@ -5,6 +5,7 @@ BEGIN;
 
 CREATE TYPE status_sender AS ENUM ('user', 'ai');
 CREATE TYPE gender_type AS ENUM ('male', 'female', 'other');
+CREATE TYPE mood_type AS ENUM ('excited', 'sad', 'angry', 'normal', 'happy');
 
 
 CREATE TABLE IF NOT EXISTS public.user
@@ -63,9 +64,10 @@ CREATE TABLE IF NOT EXISTS public.journal_session
     user_id bigint NOT NULL,
     journal_title text NOT NULL,
     journal_body text NOT NULL,
+    ai_response text NOT NULL,
     last_edited TIMESTAMP NOT NULL DEFAULT NOW(),
     started_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    mood_level INTEGER DEFAULT 0,
+    mood_level mood_type DEFAULT 'normal',
     CONSTRAINT id_primary_journal_session  PRIMARY KEY (id),
     CONSTRAINT 
         fk_journal_session_user_id  FOREIGN KEY (user_id)

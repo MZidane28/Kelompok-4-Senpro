@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
   });
 app.use('/auth', require('./domains/authentication/authRoutes'))
 app.use('/chat', require('./domains/chat/chatRoutes'))
+app.use('/journal', require('./domains/journaling/journalRoute'))
 
 
 // Start server
