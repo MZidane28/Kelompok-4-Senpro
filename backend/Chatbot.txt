@@ -1,0 +1,66 @@
+How to run the chatbot?
+1. conda create -n empati python=3.10 -y
+2. conda activate empati
+3. pip install -r requirements.txt
+
+
+Dokumentasi endpoint
+1. /embedding
+ngapain: Menyimpan pesan pengguna (pertanyaan) ke vector database (Pinecone) dengan embedding.
+json:
+{
+  "session_id": "<uuid>",
+  "user_id": "anonymous",
+  "message": "<msg>",
+  "type": "question",
+  "timestamp": "<ISO8601 datetime>"
+}
+
+2. /generateresponse
+ngapain: Mengambil pesan pengguna, memanggil LLM untuk menghasilkan respons, dan menyimpan respons ke Pinecone.
+json yang bisa disimpan ke database lain (chat history):
+(1) untuk pertanyaan pengguna:
+{
+  "session_id": "<uuid>",
+  "user_id": "anonymous", ////////////Ini ganti la
+  "message": "<msg>",
+  "type": "question",
+  "timestamp": "<ISO8601 datetime>"
+}
+(2) untuk respons chatbot:
+{
+  "session_id": "<uuid>",
+  "user_id": "anonymous", ////////////Ini juga wkwkeowko
+  "message": "<cleaned_answer>",
+  "type": "response",
+  "timestamp": "<ISO8601 datetime>"
+}
+
+3. /title
+ngapain: Menghasilkan judul singkat berdasarkan isi percakapan atau pesan tertentu (untuk nama sesi, dsb).
+json:
+{
+  "session_id": "<uuid>",
+  "title": "<generated_title>",
+  "timestamp": "<ISO8601 datetime>"
+} /////kalo mau tambahin userid
+
+4. /journalresponse
+ngapain: Menerima jurnal pengguna dan memberi respons empatik dari LLM.
+json yang bisa disimpan ke database lain (chat history):
+(1) untuk jurnal pengguna:
+{
+  "user_id": "anonymous",
+  "message": "<journal>",
+  "type": "journal",
+  "timestamp": "<ISO8601 datetime>"
+}
+(2) untuk respons chatbot terhadap jurnal:
+{
+  "user_id": "anonymous",
+  "message": "<cleaned_response>",
+  "type": "journal_response",
+  "timestamp": "<ISO8601 datetime>"
+}
+
+///////////tp ini harusnya gausah sih

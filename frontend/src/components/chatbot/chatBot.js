@@ -1,21 +1,34 @@
 'use client'
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import { flushSync } from 'react-dom';
 import dynamic from 'next/dynamic';
 
-function Chatbot() {
-  const [messages, setMessages] = useState([]);
+function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
+  const [messages, setMessages] = useState(presetMessages);
   const [input, setInput] = useState('');
-  const [sessionId] = useState(() => crypto.randomUUID());
   const [userId] = useState(() => {
     return `anonymous-${crypto.randomUUID()}`;
   });
   
-  
+  useEffect(() => {
+    setMessages(presetMessages);
+  }, [presetMessages]);
+
   const handleSend = async () => {
     if (input.trim() === '') return;
-  
+    if (messages.length === 0 && onFirstMessage && sessionId) {
+      const titleRes = await axios.post(`${baseURL}/title`, formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      const title = titleRes.data.title;
+      console.log("Generated title:", title);
+    
+      await onFirstMessage(input, sessionId, title);
+    }
+    
+    
     const userMessage = { id: Date.now(), text: input, type: 'user' };
     const loadingMessageId = Date.now() + 1;
     const loadingMessage = { id: loadingMessageId, text: '.', type: 'bot' };
@@ -99,7 +112,7 @@ function Chatbot() {
   return (
     <div className="flex flex-col h-full bg-[#FFFBF2] font-poppins">
       {/* Chat Bubbles (Scrollable) */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3">
         {messages.map((msg) => (
           <div
             key={msg.id}

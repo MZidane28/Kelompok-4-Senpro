@@ -95,7 +95,7 @@ def generate_title():
     msg = request.form["msg"]
 
     title_prompt = PromptTemplate.from_template(
-        "Generate a short, title for the following content:\n\n{context}"
+        "Generate a short, clean, human-readable title (max 5 words) for the following message. Don't include extra tags or reasoning:\n\n{context}"
     )
     title_chain = create_stuff_documents_chain(
         llm,
@@ -110,6 +110,26 @@ def generate_title():
     
     print("\n[GENERATED TITLE]:", title, flush=True)
     return jsonify({"title": title})
+
+@app.route("/journalresponse", methods=["POST"])
+def journal_response():
+    journal = request.form["journal"]
+    user_id = request.form.get("user_id", "anonymous")
+
+    journal_prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a thoughtful and empathetic companion. Respond warmly and insightfully to the user's journal entry."),
+        ("human", "{journal}")
+    ])
+
+    journal_chain = create_stuff_documents_chain(llm, journal_prompt)
+    documents = [Document(page_content=journal)]
+    response = journal_chain.invoke({"journal": documents})
+
+    raw_response = response.strip()
+    cleaned_response = re.sub(r"<think>.*?</think>", "", raw_response, flags=re.DOTALL).strip()
+
+    print("\n[JOURNAL RESPONSE]:", cleaned_response, flush=True)
+    return jsonify({"response": cleaned_response})
 
 
 @app.route("/")

@@ -1,21 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
 
-const initialData = {
-  today: [],
-  yesterday: [],
-  past7days: ['Talked about anxiety with the bot 🧠'],
-  past30days: [],
-};
-
-function Sidebar() {
-  const [chatTitles, setChatTitles] = useState(initialData);
+function Sidebar({ chatTitles, onNewChat, onSelectChat }) {
+  /***const [chatTitles, setChatTitles] = useState(initialData);
   const [currentSessionId, setCurrentSessionId] = useState(null);
 
   const handleNewChat = () => {
     const newSessionId = crypto.randomUUID();
     setCurrentSessionId(newSessionId);
-    // Title gets added after the user sends first message
   };
 
   const handleFirstMessage = async (msg) => {
@@ -39,7 +31,7 @@ function Sidebar() {
       today: [...prev.today, title],
     }));
   };
-
+  ***/
   const renderSection = (title, items) =>
     items.length > 0 && (
       <div className="mb-2">
@@ -51,12 +43,13 @@ function Sidebar() {
               type="text"
               defaultValue={item}
               className="w-full p-1 text-xs rounded border border-gray-400 bg-[#FFFBF2] focus:outline-none focus:ring-1 focus:ring-[#D9D9D9]"
+              readOnly
+              onClick={() => onSelectChat(item)}
             />
           ))}
         </div>
       </div>
     );
-
   return (
     <div className="w-64 p-3 bg-[#FFFBF2] border-r border-gray-300 h-screen overflow-y-auto font-poppins">
       <h2 className="text-lg font-bold mb-1">Chatbot</h2>
@@ -73,7 +66,7 @@ function Sidebar() {
       {renderSection("Previous 7 Days", chatTitles.past7days)}
       {renderSection("Previous 30 Days", chatTitles.past30days)}
       <button
-        onClick={handleNewChat}
+        onClick={onNewChat}
         className="mt-3 w-full bg-[#FCEEB5] text-black p-2 text-sm rounded-full hover:bg-[#ebdfaa] transition font-semibold"
       >
         + New Chat
