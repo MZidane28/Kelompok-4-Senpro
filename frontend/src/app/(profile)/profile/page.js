@@ -78,7 +78,6 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#fffaf4] text-black">
-      <Navbar />
       <main className="flex-grow flex flex-col items-center justify-center px-4 py-12">
         <div className="bg-white border-[2px] border-black rounded-2xl shadow-md w-full max-w-md p-8">
           <div className="flex flex-col items-center">
