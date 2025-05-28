@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge'
 
 function JournalCard({
     title = "Placeholder title",
+    last_edited = "2025-05-24T14:56:52.131Z",
     is_active=false,
     onClick=()=>{}
 }) {
@@ -18,6 +19,9 @@ function JournalCard({
             onClick={(e) => {onClick()}}
         >
             {title}
+            <p className='text-sm text-gray-600'>
+                Last edited: {last_edited}
+            </p>
         </div>
     )
 }

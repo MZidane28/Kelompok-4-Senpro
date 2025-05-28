@@ -5,7 +5,7 @@ import NormalButton from '@/components/buttons/normalButton'
 
 function page() {
     return (
-        <main className='flex flex-col justify-center items-center h-full w-full'>
+        <main className='flex flex-col justify-center items-center h-full w-full mt-20'>
             <Image src={'/images/heart-email.png'}
                 alt='Heart shape'
                 width={120}

@@ -107,7 +107,7 @@ function LoginForm() {
 
                 <NormalButton
                     background_color='bg-soft-yellow'
-                    text='Sign Up'
+                    text='Login'
                     custom_className='mt-6'
                     is_submit={true}
                 />

@@ -4,7 +4,7 @@ import SuspenseChangePassword from '@/components/auth/SuspenseChangePassword'
 
 function page() {
     return (
-        <main className='flex justify-center items-center h-full w-full'>
+        <main className='flex justify-center items-center h-full w-full mt-20'>
             <SuspenseChangePassword />
         </main>
     )

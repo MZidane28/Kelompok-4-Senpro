@@ -7,15 +7,19 @@ import NormalButton from '@/components/buttons/normalButton';
 
 function TextEditor({
     text_value = "",
-    onChangeEditor = (value) => {},
+    onChangeEditor = (value) => { },
     mood = "",
-    onChangeMood = (type) => {},
+    onChangeMood = (type) => { },
     onSave = () => {
+
+    },
+    onDelete = () => {
 
     },
     onAIReader = () => {
 
-    }
+    },
+    is_new = true
 }) {
     return (
         <div className='w-full h-full flex flex-col'>
@@ -29,10 +33,10 @@ function TextEditor({
 
             }
                 onChange={(e) => {
-                        e.target.style.height = 'auto'; // Reset height
-                        e.target.style.height = `${e.target.scrollHeight}px`; // Set to scroll height
-                        onChangeEditor(e.target.value)
-                    }
+                    e.target.style.height = 'auto'; // Reset height
+                    e.target.style.height = `${e.target.scrollHeight}px`; // Set to scroll height
+                    onChangeEditor(e.target.value)
+                }
                 }
                 value={text_value}
             ></textarea>
@@ -40,40 +44,40 @@ function TextEditor({
                 <div className='font-spaceGrotesk font-semibold'>
                     <p>How do you feel?</p>
                     <div className='flex flex-row mt-2 gap-2 cursor-pointer hover:text-yellow-500'>
-                        <FaGrinHearts 
+                        <FaGrinHearts
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',
                                 mood == "heart" ? 'text-yellow-500' : 'text-black'
-                            )}  
+                            )}
                             onClick={(e) => onChangeMood('heart')}
                         />
                         <FaSmile
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',
                                 mood == "happy" ? 'text-yellow-500' : 'text-black'
-                            )} 
+                            )}
                             onClick={(e) => onChangeMood('happy')}
                         />
-                        <FaMeh 
+                        <FaMeh
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',
                                 mood == "normal" ? 'text-yellow-500' : 'text-black'
-                            )}  
+                            )}
                             onClick={(e) => onChangeMood('normal')}
                         />
-                        <FaFaceAngry 
+                        <FaFaceAngry
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',
                                 mood == "angry" ? 'text-yellow-500' : 'text-black'
-                            )}  
+                            )}
                             onClick={(e) => onChangeMood('angry')}
                         />
-                        <FaSadTear 
+                        <FaSadTear
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',
                                 mood == "sad" ? 'text-yellow-500' : 'text-black'
-                            )} 
+                            )}
                             onClick={(e) => onChangeMood('sad')}
 
                         />
                     </div>
                 </div>
-                <div className='flex flex-row gap-2 min-w-[20%]'>
+                <div className='flex flex-row gap-2 min-w-[30%]'>
                     <NormalButton
                         background_color='bg-soft-yellow'
                         font_size='text-base'
@@ -92,6 +96,19 @@ function TextEditor({
                         text='Save'
                         onClick={onSave}
                     />
+                    {
+                        !is_new &&
+                        <NormalButton
+                            background_color='bg-red-300'
+                            font_size='text-base'
+                            is_submit={false}
+                            is_redirect={false}
+                            custom_className='font-bold text-sm h-fit py-2'
+                            text='Delete'
+                            onClick={onDelete}
+                        />
+                    }
+
                 </div>
             </div>
         </div>

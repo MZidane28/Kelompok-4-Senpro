@@ -7,8 +7,7 @@ import NormalButton from '../buttons/normalButton'
 import { useJournalContext } from '@/context/JournalContext'
 
 function SidebarList() {
-    const { addNewJournals, userJournalList, SetJournalSelected, selectedTitle } = useJournalContext();
-    const [search, SetSearchbar] = useState("");
+    const { addNewJournals, userJournalList, SetJournalSelected, selectedTitle,userJournalListView, SetSearchbar, search  } = useJournalContext();
 
     return (
         <div className='
@@ -31,8 +30,10 @@ function SidebarList() {
 
             <div className='flex flex-col flex-grow overflow-y-auto w-full gap-5'>
                 {
-                    userJournalList.map((data) => (
-                        <JournalCard key={data.id} title={data.title} is_active={data.id == selectedTitle} onClick={() => SetJournalSelected(data.id)} />
+                    userJournalListView.map((data ,idx) => (
+                        <JournalCard key={idx} title={data.journal_title} is_active={data.id == selectedTitle} onClick={() => SetJournalSelected(data.id)} 
+                            
+                        />
                     ))
                 }
             </div>
