@@ -61,10 +61,9 @@ const selectChatLogs = async (cursor = 0, chat_session) => {
         const getChatLogs = `
             SELECT * from chat_logs 
             WHERE fk_chat_id = $1 
-            ORDER BY created_at DESC 
-            LIMIT 10 OFFSET $2;
+            ORDER BY created_at DESC
         `
-        const resultSession = await client.query(getChatLogs, [chat_session, cursor]);
+        const resultSession = await client.query(getChatLogs, [chat_session]);
         return {
             is_error : false,
             SQLResponse : resultSession,
