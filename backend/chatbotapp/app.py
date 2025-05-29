@@ -38,10 +38,10 @@ rag_chain = create_retrieval_chain(retriever, qa_chain)
 @app.route("/embed-only", methods=["POST"])
 def embed_only():
     data = request.get_json()
-    msg = data.get("msg")
+    msg = data.get("chat_body")
 
     if not msg:
-        return jsonify({"error": "Missing 'msg' field in JSON"}), 400
+        return jsonify({"error": "Missing 'chat_body' field in JSON"}), 400
 
     vector = embeddings.embed_query(msg)
 
@@ -53,11 +53,11 @@ def embed_only():
 @app.route("/response-only", methods=["POST"])
 def response_only():
     data = request.get_json()
-    msg = data.get("msg")
+    msg = data.get("prompt")
     context = data.get("context") 
 
     if not msg:
-        return jsonify({"error": "Missing 'msg' field in JSON"}), 400
+        return jsonify({"error": "Missing 'prompt' field in JSON"}), 400
 
     combined_input = f"""
         USER QUESTION:
@@ -83,7 +83,7 @@ def response_only():
 @app.route("/title-only", methods=["POST"])
 def title_only():
     data = request.get_json()
-    msg = data.get("msg")
+    msg = data.get("chat_body")
     
     title_prompt = PromptTemplate.from_template(
         "Generate a short, clean, human-readable title (max 5 words) for the following message. Don't include extra tags or reasoning:\n\n{context}"
