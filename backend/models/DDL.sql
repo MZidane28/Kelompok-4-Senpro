@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS public.user
     profile_filled BOOLEAN NOT NULL DEFAULT FALSE,
     activation_token uuid UNIQUE DEFAULT gen_random_uuid(),
     forget_password_token uuid,  -- Define the column without UNIQUE first
-    forget_password_expire TIMESTAMP not null default current_timestamp + interval '1 day',
+    forget_password_expire TIMESTAMP,
     CONSTRAINT id_primary_user PRIMARY KEY (id),
     CONSTRAINT unique_forget_password_token UNIQUE (forget_password_token) -- Apply UNIQUE constraint correctly
 );

@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler')
 const moment = require('moment-timezone');
 
 const JournalQuery = require("../query/JournalQuery")
+const FlaskQuery = require("../../chat/query/FlaskReq")
 
 
 /**
@@ -77,9 +78,23 @@ const GetJournalById = asyncHandler(async (req, res, next) => {
  * Dapatkan respon AI dari model berdasarkan id
 */
 const GetAIResponseById = asyncHandler(async (req, res, next) => {
+    const { id } = req.params
+    const user_id = req.user.id
 
+    const journalByIdResult = await JournalQuery.GetJournalByIdQuery(user_id, id)
+    if (journalByIdResult.sql_error_message) {
+        throw new Error(journalByIdResult.sql_error_message);
+    } else if (journalByIdResult.SQLResponse.rowCount == 0) {
+        return res.status(404).json({ message: "No Journal here" })
+    }
+    const journal_data = journalByIdResult.SQLResponse.rows[0]
+    const journal_prompt = `TITLE:${journal_data.journal_title}\n${journal_data.journal_body}`
+    const flask_journal = await FlaskQuery.getJournalResponse(journal_prompt)
+    if(flask_journal.is_error) {
+        return res.status(500).json({message: "Error generating journal response"})
+    }
 
-    return res.status(200).json({ message: "Chats retrieved", sessions: [...all_chat_sessions] })
+    return res.status(200).json({ message: "Journal AI", ai_response: flask_journal.ai_response })
 })
 
 /**

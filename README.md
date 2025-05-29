@@ -111,13 +111,66 @@ Kebutuhan Pengguna:
 ![image](https://github.com/user-attachments/assets/096dcfaa-5a52-4105-83d2-2db11aa3187c)
 
 ## Konfigurasi Frontend
+Prasyarat: membuat **.env.local** sendiri berisikan:
+```
+NEXT_PUBLIC_BE_URL="http://localhost:3500" # URL deployment BE NodeJS + Express 
+```
 
-## Konfigurasi Backend
+Deployment frontend aplikasi **Empati** dilakukan melalui Vercel dan URL nya empati.biz.id
+
+## Konfigurasi Backend Express
+Prasyarat: membuat **.env** sendiri berdasarkan dari **.env.example**
+Tata cara menjalankan Backend secara lokal disarankan memakai docker:
+```
+npm i
+npm run dev
+```
+
+**Dockerfile** untuk backend berada dalam *backend/dockerfile* dan dipanggil di **docker-compose.yaml** utama di root workspace.
+
+Backend dapat diakses melalui: api.empati.biz.id
+
+## Konfigurasi Backend Flask
 
 ## Konfigurasi Database
+Aplikasi **Empati** menggunakan dua jenis basis data, yaitu:
+### 1. PostgreSQL
+Digunakan untuk menyimpan data berikut:
+
+- Data pengguna
+- Sesi pengguna
+- Sesi chat
+- Log chat
+
+Basis data ini dideploy menggunakan layanan **Aiven**. Konfigurasi yang terdapat pada file `.env` di folder `backend` adalah sebagai berikut:
+```
+DB_LOCAL="FALSE"
+DB_USER="USER"
+DB_HOST="URL HOST"
+DB_NAME=""
+DB_PASSWORD=""
+DB_PORT=""
+DB_CA="" # Jika pakai Certificate
+```
+
+### 2. QDrant
+Merupakan basis data vektor yang digunakan untuk menyimpan hasil embedding dari percakapan antara pengguna dan AI. Deployment dilakukan secara langsung di VM Azure menggunakan Docker
+
+Konfigurasi pada file .env di folder backend:
+```
+QDRANT_URL="http://localhost:6333" # URL deployment QDrant secara lokal
+```
+
 
 ## Konfigurasi Docker
+keseluruhan docker untuk semua aplikasi berada di docker-compose.yaml pada root folder github ini. Untuk deployment, VM hanya menjalankan **Flask**, **Express**, dan **QDrant**. Database berada di Aiven dan Frontend **NextJS** berada di Vercel. Pastikan **.env** diisikan semua sesuai ketentuan
 
 ## Software Testing
+### 1. Postman
+
+
+### 2. End to End Testing
+
+
 
 ## Link Demo (Youtube)

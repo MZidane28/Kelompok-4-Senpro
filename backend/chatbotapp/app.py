@@ -202,22 +202,25 @@ def generate_title():
 
 @app.route("/journalresponse", methods=["POST"])
 def journal_response():
-    journal = request.form["journal"]
-    user_id = request.form.get("user_id", "anonymous")
+    data = request.get_json()
+    journal = data.get("journal")
+    print("JOURNAL", journal)
 
-    journal_prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are a thoughtful and empathetic companion. Respond warmly and insightfully to the user's journal entry."),
-        ("human", "{journal}")
-    ])
+    journal_prompt = PromptTemplate.from_template(
+        "You are a thoughtful and empathetic companion. Respond warmly and insightfully to the user's journal entry.\n\n{context}"
+    )
+    journal_chain = create_stuff_documents_chain(
+        llm1,
+        journal_prompt,
+        document_variable_name="context"
+    )
 
-    journal_chain = create_stuff_documents_chain(llm, journal_prompt)
     documents = [Document(page_content=journal)]
-    response = journal_chain.invoke({"journal": documents})
+    journal_response = journal_chain.invoke({"context": documents})
+    raw_journal = journal_response.strip()
+    cleaned_response = re.sub(r"<think>.*?</think>", "", raw_journal, flags=re.DOTALL).strip()
 
-    raw_response = response.strip()
-    cleaned_response = re.sub(r"<think>.*?</think>", "", raw_response, flags=re.DOTALL).strip()
-
-    print("\n[JOURNAL RESPONSE]:", cleaned_response, flush=True)
+    print("\n[JOURNAL RESPONSE]:", raw_journal, flush=True)
     return jsonify({"response": cleaned_response})
 
 
