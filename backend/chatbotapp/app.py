@@ -87,7 +87,9 @@ def response_only():
     """
     #temp = create_retrieval_chain(context, qa_chain)
     #response = temp.invoke({"input": msg}) 
-    response = qa_chain.invoke({"input": combined_input})
+    response = qa_chain.invoke({
+    "input_documents": [Document(page_content=combined_input)]
+    })
     raw_answer = response["answer"]
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()

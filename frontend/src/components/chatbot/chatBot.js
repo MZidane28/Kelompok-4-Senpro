@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 
 function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
   const [messages, setMessages] = useState(presetMessages);
+  const [firstMessageSent, setFirstMessageSent] = useState(false);
   const [input, setInput] = useState('');
   const [userId] = useState(() => {
     return `anonymous-${crypto.randomUUID()}`;
@@ -15,6 +16,10 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
   useEffect(() => {
     setMessages(presetMessages);
   }, [presetMessages]);
+
+  useEffect(() => {
+    setFirstMessageSent(false);
+  }, [sessionId]);  
 
   const handleSend = async () => {
     if (input.trim() === '') return;
@@ -25,7 +30,7 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
     formData.append("session_id", sessionId);
     formData.append("user_id", userId);
 
-    if (messages.length === 0 && onFirstMessage && sessionId) {
+    if (!firstMessageSent && onFirstMessage && sessionId) {
       try {
         const titleRes = await axios.post(`${baseURL}/title`, formData, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -33,12 +38,13 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
         });
         const title = titleRes.data.title;
         console.log("Generated title:", title);
-  
+    
         await onFirstMessage(input, sessionId, title);
+        setFirstMessageSent(true); // 🔒 prevents repeat
       } catch (err) {
-        console.error('Failed to generate title:', err);
+        console.error("Failed to generate title:", err);
       }
-    }
+    }    
     
     const userMessage = { id: Date.now(), text: input, type: 'user' };
     const loadingMessageId = Date.now() + 1;
