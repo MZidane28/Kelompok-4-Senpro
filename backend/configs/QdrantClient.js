@@ -1,7 +1,7 @@
 const QDrant = require('@qdrant/js-client-rest');
 
 // TO connect to Qdrant running locally
-const client = new QDrant.QdrantClient({ url: 'http://127.0.0.1:6333' });
+const client = new QDrant.QdrantClient({ url: process.env.QDRANT_URL });
 console.log("DB Vector Connected")
 
 async function createCollection() {

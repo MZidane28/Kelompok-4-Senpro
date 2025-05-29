@@ -17,6 +17,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3500:3500"
+
+    depends_on:
+      - qdrant
     environment:
       - NODE_ENV=production
     restart: unless-stopped

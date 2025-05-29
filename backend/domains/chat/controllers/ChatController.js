@@ -125,11 +125,11 @@ const PostChat = asyncHandler(async (req, res, next) => {
 
     // query 5 konteks dari vectordb
     let chat_relative_context = await VectorQuery.find_relative_conversation(chat_id_context, vector_embed);
-    console.log("POINT", chat_relative_context)
+    //console.log("POINT", chat_relative_context)
     //let chat_relative_context = "";
     let contextText = "EMPTY"
     if (chat_relative_context && chat_relative_context.length > 0) {
-        contextText = chat_relative_context.map(result => {
+        contextText = chat_relative_context?.points.map(result => {
             return result.payload?.chat || result.payload?.content || result.payload?.text || "";
         }).join("\n");
     }

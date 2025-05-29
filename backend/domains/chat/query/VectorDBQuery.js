@@ -5,7 +5,7 @@ const find_relative_conversation = async (chat_id, prompt_vector) => {
         //console.log("CHAT ID", chat_id)
         const results = await client.query('empati', {
             vector: prompt_vector,
-            limit: 2,
+            limit: 1,
             filter: {
                 must: [
                     {
