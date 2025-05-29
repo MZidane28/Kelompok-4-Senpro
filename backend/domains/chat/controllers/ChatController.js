@@ -125,8 +125,9 @@ const PostChat = asyncHandler(async (req, res, next) => {
 
     // query 5 konteks dari vectordb
     let chat_relative_context = await VectorQuery.find_relative_conversation(chat_id_context, vector_embed);
+    console.log("POINT", chat_relative_context)
     //let chat_relative_context = "";
-
+    let contextText = "EMPTY"
     if (chat_relative_context && chat_relative_context.length > 0) {
         contextText = chat_relative_context.map(result => {
             return result.payload?.chat || result.payload?.content || result.payload?.text || "";
@@ -134,19 +135,12 @@ const PostChat = asyncHandler(async (req, res, next) => {
     }
 
     // kombinasi konteks
-    let chat_combined_prompt = `
-        PROMPT:
-        ${user_question} \n
-
-        RELATIVE CONTEXT:
-        ${chat_relative_context}
-
-    `
+    let chat_combined_prompt = `${contextText ?? "EMPTY"}`
 
     // get response from ai dan vector embedding
     let ai_response = "";
     let new_vector_embed = []
-    console.log("CONTEXT",chat_combined_prompt)
+    //console.log("CONTEXT",chat_combined_prompt)
     const response_generate = await FlaskQuery.getAIResponse(chat_combined_prompt, user_question);
     if (response_generate.is_error) {
         console.log(response_generate.error_msg)
