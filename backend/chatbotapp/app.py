@@ -79,18 +79,16 @@ def response_only():
         return jsonify({"error": "Missing 'context' field in JSON"}), 400
 
     combined_input = f"""
-        USER QUESTION:
-        {msg}
-
         CONTEXT:
         {context if context else "No additional context provided."}
     """
     #temp = create_retrieval_chain(context, qa_chain)
     #response = temp.invoke({"input": msg}) 
     response = qa_chain.invoke({
-    "input_documents": [Document(page_content=combined_input)]
+    "input": msg,
+    "context": [Document(page_content=combined_input)]
     })
-    raw_answer = response["answer"]
+    raw_answer = response
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
     print("\n[RAW RESPONSE]:\n", raw_answer)
