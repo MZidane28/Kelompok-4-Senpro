@@ -157,12 +157,26 @@ export const JournalProvider = ({ children }) => {
         }
     }
 
-    const RequestAIResponse = (id) => {
-        console.log("JALAN")
-        setActiveInputJournal({
-            ...active_input_journal,
-            ai_response: "Hello there, are you feeling down. Lets go appreciate the sunshine today"
-        })
+    const RequestAIResponse = async () => {
+        if (selectedTitle == null) {
+            return toast_message("Please save the journal first", true)
+        }
+        try {
+            const response = await axios.get(process.env.NEXT_PUBLIC_BE_URL + "/journal/ai/" + selectedTitle, {
+                withCredentials: true
+            })
+            const ai_response = response.data.ai_response
+            const data_journal = response.data.journal
+            setActiveInputJournal({
+                ...active_input_journal,
+                ai_response: ai_response
+            })
+            toast_message(response.data?.message, false);
+            SetStaleList(true)
+        } catch (error) {
+            console.log(error)
+            toast_message(error?.response?.data?.message ?? error.message, true);
+        }
         // update data di list
     }
 
@@ -218,13 +232,14 @@ export const JournalProvider = ({ children }) => {
             saveJournal,
             deleteJournal,
             SetJournalSelected,
+            RequestAIResponse,
 
             selectedTitle,
 
             setActiveInputJournal,
             active_input_journal,
 
-            RequestAIResponse
+            
         }}>
             {children}
         </JournalContext.Provider>
