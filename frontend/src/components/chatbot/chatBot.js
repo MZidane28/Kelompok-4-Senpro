@@ -12,7 +12,9 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
   const [userId] = useState(() => {
     return `anonymous-${crypto.randomUUID()}`;
   });
-  
+
+  // In your handleSend function, add validation:
+
   useEffect(() => {
     setMessages(presetMessages);
   }, [presetMessages]);
@@ -23,29 +25,9 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
 
   const handleSend = async () => {
     if (input.trim() === '') return;
-    
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-    const formData = new URLSearchParams();
-    formData.append("msg", input);
-    formData.append("session_id", sessionId);
-    formData.append("user_id", userId);
-
-    if (!firstMessageSent && onFirstMessage && sessionId) {
-      try {
-        const titleRes = await axios.post(`${baseURL}/title`, formData, {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          withCredentials: true
-        });
-        const title = titleRes.data.title;
-        console.log("Generated title:", title);
-    
-        await onFirstMessage(input, sessionId, title);
-        setFirstMessageSent(true); // 🔒 prevents repeat
-      } catch (err) {
-        console.error("Failed to generate title:", err);
-      }
-    }    
-    
+  
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3500';
+  
     const userMessage = { id: Date.now(), text: input, type: 'user' };
     const loadingMessageId = Date.now() + 1;
     const loadingMessage = { id: loadingMessageId, text: '.', type: 'bot' };
@@ -53,51 +35,51 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
     flushSync(() => {
       setMessages((prev) => [...prev, userMessage, loadingMessage]);
     });
-    
-    // Clear input immediately
+  
     setInput('');
   
-    try {
-      await axios.post(`${baseURL}/embedding`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        withCredentials: true
-      });
-    } catch (err) {
-      console.error('Embedding failed:', err);
-    }
-  
-    // Animate loading message
     const dotPatterns = ['.', '..', '...'];
     let dotIndex = 0;
-
+  
     const loadingInterval = setInterval(() => {
       dotIndex = (dotIndex + 1) % dotPatterns.length;
       const loadingDots = dotPatterns[dotIndex];
-
+  
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === loadingMessageId ? { ...msg, text: loadingDots } : msg
         )
       );
     }, 300);
-
   
     try {
-      const res = await axios.post(`${baseURL}/generateresponse`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      const res = await axios.post(`${baseURL}/chat`, {
+        is_new: !firstMessageSent,
+        chat_id: sessionId,
+        user_question: input,
+      }, {
         withCredentials: true
       });
   
       clearInterval(loadingInterval);
   
-      // Replace loading message with actual bot message
+      const aiResponse = res.data.ai_response;
+  
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === loadingMessageId
-            ? { ...msg, text: res.data.response }
-            : msg
+          msg.id === loadingMessageId ? { ...msg, text: aiResponse } : msg
         )
       );
+  
+      if (!firstMessageSent && onFirstMessage) {
+        const newSessionId = res.data.chat_id; // get from response
+        setCurrentSessionId(newSessionId);
+      
+        await onFirstMessage(input, newSessionId, '');
+        setFirstMessageSent(true);
+      }
+      
+  
     } catch (error) {
       clearInterval(loadingInterval);
   
@@ -108,9 +90,11 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
             : msg
         )
       );
-      console.error('Axios error:', error);
+      console.error('Chat error:', error);
     }
-  };
+  };  
+
+  
   
   
 
