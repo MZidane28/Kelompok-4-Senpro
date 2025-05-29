@@ -27,6 +27,32 @@ export function AuthProvider({ children }) {
         }
     };
 
+    const ensureUser = async () => {
+        try {
+            setLoading(true)
+            const response = await axios.get(process.env.NEXT_PUBLIC_BE_URL + "/auth/ensure-user", {
+                withCredentials: true
+            })
+            setLoading(false)
+            return true
+        } catch (error) {
+            setLoading(false)
+            return false
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await axios.patch(process.env.NEXT_PUBLIC_BE_URL + "/auth/logout", {},{
+                withCredentials: true
+            })
+            setUser(null)
+            return true
+        } catch (error) {
+            return false
+        }
+    };
+
     useEffect(() => {
 
 
@@ -44,7 +70,9 @@ export function AuthProvider({ children }) {
             loading,
             Logout,
             user,
-            fetchUser
+            fetchUser,
+            ensureUser,
+            handleLogout
         }}>
             {children}
         </AuthContext.Provider>
