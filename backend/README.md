@@ -62,6 +62,7 @@ body {
     message: "Chat uploaded", 
     ai_response: "Test AI", 
     error_ai: false, 
-    error_response: null
+    error_response: null,
+    title : ""
 }
 ```
