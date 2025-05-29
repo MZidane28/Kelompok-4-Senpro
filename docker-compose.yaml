@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  # otw backend
+  # otw flask
   frontend:
     build:
       context: ./frontend
@@ -11,3 +11,28 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+  backend-express:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3500:3500"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"  # HTTP API
+      - "6334:6334"  # gRPC API
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__LOG_LEVEL: INFO  # Set logging level
+
+volumes:
+  qdrant_data:
+    driver: local
