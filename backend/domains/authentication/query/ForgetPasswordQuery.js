@@ -39,7 +39,8 @@ const insertNewToken = async(email) => {
         const insertPasswordToken = `
                 UPDATE public.user 
                 SET forget_password_expire = (CURRENT_TIMESTAMP + '1 day'::interval), forget_password_token = gen_random_uuid()
-                WHERE email = $1;
+                WHERE email = $1
+                RETURNING *;
         `
         const resultSession = await client.query(insertPasswordToken, [email]);
         await client.query("COMMIT")
