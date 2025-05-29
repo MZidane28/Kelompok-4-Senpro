@@ -26,16 +26,19 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
     formData.append("user_id", userId);
 
     if (messages.length === 0 && onFirstMessage && sessionId) {
-      const titleRes = await axios.post(`${baseURL}/title`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        withCredentials: true
-      });
-      const title = titleRes.data.title;
-      console.log("Generated title:", title);
-    
-      await onFirstMessage(input, sessionId, title);
+      try {
+        const titleRes = await axios.post(`${baseURL}/title`, formData, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          withCredentials: true
+        });
+        const title = titleRes.data.title;
+        console.log("Generated title:", title);
+  
+        await onFirstMessage(input, sessionId, title);
+      } catch (err) {
+        console.error('Failed to generate title:', err);
+      }
     }
-    
     
     const userMessage = { id: Date.now(), text: input, type: 'user' };
     const loadingMessageId = Date.now() + 1;
