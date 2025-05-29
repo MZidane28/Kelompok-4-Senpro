@@ -94,6 +94,11 @@ const GetAIResponseById = asyncHandler(async (req, res, next) => {
         return res.status(500).json({message: "Error generating journal response"})
     }
 
+    const journalAIResponse = await JournalQuery.SaveJournalAI(user_id, flask_journal.ai_response, journal_data.id)
+    if (journalAIResponse.sql_error_message) {
+        throw new Error(journalByIdResult.sql_error_message);
+    }
+
     return res.status(200).json({ message: "Journal AI", ai_response: flask_journal.ai_response })
 })
 
