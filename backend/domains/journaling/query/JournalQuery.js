@@ -72,6 +72,42 @@ const SaveJournal = async (user_id, journal_title, journal_body, mood_level, jou
 }
 
 /**
+ * @brief update journal baru by id
+ */
+const SaveJournalAI = async (user_id, ai_response, journal_id) => {
+    const client = await db.connect();
+    try {
+        const queryText = `
+                UPDATE journal_session
+                SET 
+                    ai_response = $1,
+                    last_edited = NOW()
+                WHERE 
+                    id = $2 AND user_id = $3
+                RETURNING *;
+            `;
+        const resultSession = await client.query(queryText, [ai_response, journal_id, user_id]);
+        return {
+            is_error: false,
+            SQLResponse: resultSession,
+            error_message: null,
+            error: null,
+        }
+    } catch (error) {
+
+        return {
+            is_error: true,
+            SQLResponse: null,
+            other_error_message: null,
+            sql_error_message: error.message,
+            error: error,
+        }
+    } finally {
+        client.release()
+    }
+}
+
+/**
  * @brief delete journal baru by user id and journal id
  */
 const DeleteJournal = async (user_id, journal_id) => {
@@ -168,5 +204,6 @@ module.exports = {
     GetJournalByIdQuery,
     GetJournalUser,
     SaveJournal,
-    DeleteJournal
+    DeleteJournal,
+    SaveJournalAI
 }
