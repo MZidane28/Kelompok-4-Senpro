@@ -4,7 +4,8 @@ import { useAnimatedText } from '../TextStreamAnimation'
 import TypeIt from 'typeit-react';
 
 function AIResponse({
-    ai_response = ""
+    ai_response = "",
+    new_response = false
 }) {
 
     if(ai_response?.length != 0 ) {
@@ -13,7 +14,12 @@ function AIResponse({
                 <p className='font-spaceGrotesk font-bold text-lg'>
                     AI Response
                 </p>
-                <TypeIt options={{ cursor: false , speed: 30, nextStringDelay: 100}}>{ai_response}</TypeIt>
+                {
+                    new_response ?
+                        <TypeIt options={{ cursor: false , speed: 30, nextStringDelay: 100}}>{ai_response}</TypeIt>
+                        :
+                        <p>{ai_response}</p>
+                }
             </div>
         )
     }

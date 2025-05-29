@@ -9,7 +9,7 @@ function JournalEditor() {
     const { setActiveInputJournal, active_input_journal, 
         saveJournal, RequestAIResponse, 
         selectedTitle, deleteJournal,
-        
+        is_new_response
     } 
     = useJournalContext();
 
@@ -49,7 +49,7 @@ function JournalEditor() {
                 onAIReader={() => RequestAIResponse()}
                 is_new={selectedTitle == null}
             />
-            <AIResponse ai_response={active_input_journal?.ai_response}/>
+            <AIResponse ai_response={active_input_journal?.ai_response} new_response={is_new_response}/>
         </div>
     )
 }

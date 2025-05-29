@@ -16,6 +16,7 @@ export const JournalProvider = ({ children }) => {
 
 
     const [search, SetSearchbar] = useState("");
+    const [is_new_response, SetIsNewResponse] = useState(false);
     const [userJournalList, SetUserJournalList] = useState([
     ])
     const userJournalListView = useMemo(() => {
@@ -144,6 +145,7 @@ export const JournalProvider = ({ children }) => {
                 withCredentials: true
             })
             const data_journal = response.data.journal
+            SetIsNewResponse(false)
             setActiveInputJournal({
                 mood: data_journal.mood_level,
                 text: data_journal.journal_body,
@@ -168,6 +170,7 @@ export const JournalProvider = ({ children }) => {
             console.log(response.data)
             const ai_response = response.data.ai_response
             const data_journal = response.data.journal
+            SetIsNewResponse(true)
             setActiveInputJournal({
                 ...active_input_journal,
                 ai_response: ai_response
@@ -234,6 +237,7 @@ export const JournalProvider = ({ children }) => {
             deleteJournal,
             SetJournalSelected,
             RequestAIResponse,
+            is_new_response,
 
             selectedTitle,
 
