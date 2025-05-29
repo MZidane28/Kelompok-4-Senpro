@@ -85,9 +85,9 @@ def response_only():
         CONTEXT:
         {context if context else "No additional context provided."}
     """
-    temp = create_retrieval_chain(context, qa_chain)
-    response = temp.invoke({"input": msg}) 
-
+    #temp = create_retrieval_chain(context, qa_chain)
+    #response = temp.invoke({"input": msg}) 
+    response = qa_chain.invoke({"input": combined_input})
     raw_answer = response["answer"]
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
@@ -160,7 +160,10 @@ def generate_response():
     # Use filtered retriever in a new RAG chain
     filtered_chain = create_retrieval_chain(filtered_retriever, qa_chain)
     response = filtered_chain.invoke({"input": msg})
-
+    print("\n=== Filtered Retriever ===")
+    print(filtered_retriever)
+    print("\n=== Retriever Type ===")
+    print(type(filtered_retriever))
     raw_answer = response["answer"]
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
     print("\n[RAW RESPONSE]:\n", raw_answer)
