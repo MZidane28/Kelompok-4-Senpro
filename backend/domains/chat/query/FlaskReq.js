@@ -2,7 +2,7 @@ const axios = require("axios")
 
 const requestChatTitle = async (chat_body) => {
     try {
-        const response = await axios.post(process.env.FLASK_URL + "/title", {
+        const response = await axios.post(process.env.FLASK_URL + "/title-only", {
             chat_body: chat_body
         })
 
@@ -23,7 +23,7 @@ const requestChatTitle = async (chat_body) => {
 
 const getEmbeddedPrompt = async (chat_body) => {
     try {
-        const response = await axios.post(process.env.FLASK_URL + "/embedded", {
+        const response = await axios.post(process.env.FLASK_URL + "/embed-only", {
             chat_body: chat_body
         })
 
@@ -44,7 +44,7 @@ const getEmbeddedPrompt = async (chat_body) => {
 
 const getAIResponse = async (context, prompt) => {
     try {
-        const response = await axios.post(process.env.FLASK_URL + "/generate-response", {
+        const response = await axios.post(process.env.FLASK_URL + "/response-only", {
             context: context,
             prompt: prompt
         })
