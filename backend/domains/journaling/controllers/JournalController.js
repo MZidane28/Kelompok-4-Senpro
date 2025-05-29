@@ -91,6 +91,8 @@ const GetAIResponseById = asyncHandler(async (req, res, next) => {
     const journal_prompt = `TITLE:${journal_data.journal_title}\n${journal_data.journal_body}`
     const flask_journal = await FlaskQuery.getJournalResponse(journal_prompt)
     if(flask_journal.is_error) {
+        console.log(flask_journal.error_msg)
+        console.log("ERROR FULL:", flask_journal.error)
         return res.status(500).json({message: "Error generating journal response"})
     }
 

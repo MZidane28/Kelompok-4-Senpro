@@ -80,7 +80,8 @@ const getJournalResponse = async (journal_body) => {
         //console.log(error)
         return {
             is_error: true,
-            error_msg: error.message
+            error_msg: error.message,
+            error: error
         }
     }
 }
