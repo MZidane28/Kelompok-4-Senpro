@@ -23,7 +23,7 @@ const find_relative_conversation = async (chat_id, prompt_vector) => {
 
 }
 
-const insert_new_vector = async (chat_id, vector) => {
+const insert_new_vector = async (chat_id, vector, chat_text) => {
     try {
         const response = await client.upsert('empati', {
             points: [
@@ -32,6 +32,7 @@ const insert_new_vector = async (chat_id, vector) => {
                     vector: vector, // must match the dimension defined when creating the collection
                     payload: {
                         chat_session_id: chat_id,
+                        content: chat_text,
                     },
                 },
             ],

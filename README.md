@@ -109,3 +109,15 @@ Kebutuhan Pengguna:
 
 ## 📊 Gantt-Chart
 ![image](https://github.com/user-attachments/assets/096dcfaa-5a52-4105-83d2-2db11aa3187c)
+
+## Konfigurasi Frontend
+
+## Konfigurasi Backend
+
+## Konfigurasi Database
+
+## Konfigurasi Docker
+
+## Software Testing
+
+## Link Demo (Youtube)
