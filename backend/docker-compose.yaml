@@ -15,4 +15,3 @@ services:
 
 volumes:
   qdrant_data:
-    driver: local
