@@ -83,7 +83,7 @@ const PostChat = asyncHandler(async (req, res, next) => {
     if (is_new) {
         const response_title = await FlaskQuery.requestChatTitle(user_question);
         if (response_title.is_error) {
-            console.log(response_title.error_msg)
+            console.log("TITLE",response_title.error_msg)
             return res.status(500).json({ message: "Error when generating response" })
         } else {
             create_new_title = response_title.title

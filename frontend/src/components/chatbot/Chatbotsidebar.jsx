@@ -1,43 +1,12 @@
 'use client';
-//import React, { useState } from 'react';
 
 function Sidebar({ chatTitles, onNewChat, onSelectChat }) {
-  /***const [chatTitles, setChatTitles] = useState(initialData);
-  const [currentSessionId, setCurrentSessionId] = useState(null);
-
-  const handleNewChat = () => {
-    const newSessionId = crypto.randomUUID();
-    setCurrentSessionId(newSessionId);
-  };
-
-  const handleFirstMessage = async (msg) => {
-    const formData = new FormData();
-    formData.append("msg", msg);
-    formData.append("session_id", currentSessionId);
-
-    await fetch("http://localhost:8080/embedding", {
-      method: "POST",
-      body: formData,
-    });
-
-    const titleRes = await fetch("http://localhost:8080/title", {
-      method: "POST",
-      body: formData,
-    });
-    const title = (await titleRes.json()).title;
-
-    setChatTitles((prev) => ({
-      ...prev,
-      today: [...prev.today, title],
-    }));
-  };
-  ***/
   const renderSection = (title, items) =>
     items.length > 0 && (
       <div className="mb-2">
         <h4 className="text-xs text-gray-500 font-semibold mb-1">{title}</h4>
         <div className="space-y-1">
-          {items.map((item, index) => (
+          {[...items].reverse().map((item, index) => (
             <input
               key={index}
               type="text"
