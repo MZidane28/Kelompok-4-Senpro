@@ -1,37 +1,28 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
-  //const [user, setUser] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const { user } = useAuth();
+  const pathname = usePathname();
 
-  const { loading, user, fetchUser } = useAuth();
-
-  /* useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('user');
-      const imageData = localStorage.getItem('profileImage');
-
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-
-      if (imageData) {
-        setProfileImage(imageData);
-      }
-    }
-  }, []); */
-
+  const navLinks = [
+    { name: 'Home', href: '/' },
+    { name: 'Chatbot', href: '/chatbot' },
+    { name: 'Daily Journal', href: '/daily-journal' },
+    { name: 'Breathing Exercise', href: '/breathing-exercise' },
+  ];
 
   return (
     <div className="w-full bg-[#FFFBF2] text-black font-poppins px-6 py-4 flex justify-between items-center border-[3px] border-black rounded-t-none rounded-b-xl shadow-sm sticky top-0 z-50">
       
-      {/* Left: Logo */}
+      {/* Logo */}
       <div className="flex items-center gap-1 -mr-7">
+        <Link href="/">
         <Image
           src="/images/Logo Empati.png"
           alt="Empati Logo"
@@ -39,15 +30,25 @@ export default function Navbar() {
           height={32}
           style={{ height: "auto" }}
         />
+        </Link>
       </div>
 
-      {/* Center: Nav Links */}
+      {/* Navigation Links */}
       <div className="flex items-center text-[18px] gap-8 text-md ml-20 font-semibold">
-        <Link href="/#home" className="hover:underline">Home</Link>
-        <Link href="/#features" className="hover:underline">Features</Link>
+        {navLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`hover:underline ${
+              pathname === link.href ? 'underline underline-offset-4 decoration-[2px]' : ''
+            }`}
+          >
+            {link.name}
+          </Link>
+        ))}
       </div>
 
-      {/* Right: Conditional */}
+      {/* User Section */}
       <div className="flex items-center gap-3">
         {user ? (
           <>
@@ -63,7 +64,7 @@ export default function Navbar() {
                 />
               ) : (
                 <Image
-                  src="images/profile-avatar.svg"
+                  src="/images/profile-avatar.svg"
                   alt="Default Avatar"
                   width={40}
                   height={40}
