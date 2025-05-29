@@ -110,27 +110,32 @@ Kebutuhan Pengguna:
 ## 📊 Gantt-Chart
 ![image](https://github.com/user-attachments/assets/096dcfaa-5a52-4105-83d2-2db11aa3187c)
 
+## Arsitektur Sistem
+![Get All Appointments](images/arsitektur.jpg)
+
 ## Konfigurasi Frontend
-Prasyarat: membuat **.env.local** sendiri berisikan:
+Agar dapat dijalankan secara lokal, buat file `.env.local` dengan isi sebagai berikut:
 ```
 NEXT_PUBLIC_BE_URL="http://localhost:3500" # URL deployment BE NodeJS + Express 
 ```
 
-Deployment frontend aplikasi **Empati** dilakukan melalui Vercel dan URL nya empati.biz.id
+Frontend aplikasi Empati dideploy menggunakan Vercel dengan URL: https://empati.biz.id
 
 ## Konfigurasi Backend Express
-Prasyarat: membuat **.env** sendiri berdasarkan dari **.env.example**
-Tata cara menjalankan Backend secara lokal disarankan memakai docker:
+Prasyarat: membuat `.env` sendiri berdasarkan dari `.env.example`
+Cara menjalankan backend secara lokal:
 ```
 npm i
 npm run dev
 ```
 
-**Dockerfile** untuk backend berada dalam *backend/dockerfile* dan dipanggil di **docker-compose.yaml** utama di root workspace.
+File **Dockerfile** untuk backend berada di direktori `backend/dockerfile` dan digunakan dalam file `docker-compose.yaml` yang berada di root workspace.
 
-Backend dapat diakses melalui: api.empati.biz.id
+Backend dideploy dengan domain: https://api.empati.biz.id
 
 ## Konfigurasi Backend Flask
+Backend Flask disarankan dijalankan menggunakan Python virtual environment atau Docker. Daftar dependensi dapat ditemukan di file `requirement.txt` 
+Agar dapat dijalankan, buat file `.env` yang sesuai dengan contoh di `.env.example.` API key berasal dari pihak ketiga dan tidak disediakan oleh tim Empati.
 
 ## Konfigurasi Database
 Aplikasi **Empati** menggunakan dua jenis basis data, yaitu:
@@ -156,21 +161,23 @@ DB_CA="" # Jika pakai Certificate
 ### 2. QDrant
 Merupakan basis data vektor yang digunakan untuk menyimpan hasil embedding dari percakapan antara pengguna dan AI. Deployment dilakukan secara langsung di VM Azure menggunakan Docker
 
-Konfigurasi pada file .env di folder backend:
+Konfigurasi file `.env` di folder `backend`:
 ```
 QDRANT_URL="http://localhost:6333" # URL deployment QDrant secara lokal
 ```
 
 
 ## Konfigurasi Docker
-keseluruhan docker untuk semua aplikasi berada di docker-compose.yaml pada root folder github ini. Untuk deployment, VM hanya menjalankan **Flask**, **Express**, dan **QDrant**. Database berada di Aiven dan Frontend **NextJS** berada di Vercel. Pastikan **.env** diisikan semua sesuai ketentuan
+keseluruhan docker untuk semua aplikasi berada di `docker-compose.yaml` pada root folder github ini. Untuk deployment cloud, VM hanya menjalankan **Flask**, **Express**, dan **QDrant**. Database berada di Aiven dan Frontend **NextJS** berada di Vercel. 
+
+Pastikan `.env` diisikan semua sesuai ketentuan agar ketika menjalankan `docker-compose up` tidak terjadi masalah
 
 ## Software Testing
 ### 1. Postman
-
+Seluruh pengujian terhadap endpoint pada backend Express maupun Flask dilakukan menggunakan Postman. Pengujian dilakukan secara manual tanpa menggunakan otomasi atau test suite otomatis.
 
 ### 2. End to End Testing
-
+Pengujian integrasi antara frontend dan backend dilakukan secara manual untuk memastikan seluruh fitur berjalan dengan baik secara menyeluruh. Proses ini dilakukan dengan bantuan Docker untuk mensimulasikan lingkungan produksi dan menghindari fenomena *"It works on my machine"*. Hal ini membantu memastikan konsistensi perilaku aplikasi di berbagai lingkungan.
 
 
 ## Link Demo (Youtube)
