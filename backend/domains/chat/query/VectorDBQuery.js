@@ -18,7 +18,7 @@ const find_relative_conversation = async (chat_id, prompt_vector) => {
             },
             with_payload: ["chat_session_id", "content"]
         });
-        //console.log(results);
+        return results
     } catch (error) {
         console.log(error)
         throw error
