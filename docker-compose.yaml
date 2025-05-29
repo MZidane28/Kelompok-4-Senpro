@@ -24,6 +24,19 @@ services:
       - NODE_ENV=production
     restart: unless-stopped
 
+  flask-ai:
+    build:
+      context: ./backend/chatbotapp
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+
+    depends_on:
+      - qdrant
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
   qdrant:
     image: qdrant/qdrant:latest
     container_name: qdrant
