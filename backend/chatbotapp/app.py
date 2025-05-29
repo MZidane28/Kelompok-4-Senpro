@@ -87,6 +87,7 @@ def response_only():
     """
     temp = create_retrieval_chain(context, qa_chain)
     response = temp.invoke({"input": msg}) 
+
     raw_answer = response["answer"]
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()

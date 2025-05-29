@@ -62,7 +62,7 @@ const GetChatLogs = asyncHandler(async (req, res, next) => {
 const PostChat = asyncHandler(async (req, res, next) => {
     const user_data = req.user;
     const { is_new, chat_id, user_question } = req.body;
-
+    let chat_id_context = 0;
 
     if (user_question) {
         if (typeof user_question === 'string') {
@@ -96,6 +96,7 @@ const PostChat = asyncHandler(async (req, res, next) => {
             throw new Error(checkUserResponse.sql_error_message);
         }
         chat_session = responseChatInsert.SQLResponse.rows[0];
+        chat_id_context = chat_session.id
     }
     // ambil chat yang sudah ada
     else {
@@ -107,6 +108,8 @@ const PostChat = asyncHandler(async (req, res, next) => {
         }
 
         chat_session = responseChatSessionSearch.SQLResponse.rows[0]
+        
+        chat_id_context = chat_session.id
     }
 
     // get embedding
@@ -121,7 +124,7 @@ const PostChat = asyncHandler(async (req, res, next) => {
 
 
     // query 5 konteks dari vectordb
-    let chat_relative_context = VectorQuery.find_relative_conversation(chat_id, vector_embed);
+    let chat_relative_context = await VectorQuery.find_relative_conversation(chat_id_context, vector_embed);
     //let chat_relative_context = "";
 
     if (chat_relative_context && chat_relative_context.length > 0) {
@@ -143,6 +146,7 @@ const PostChat = asyncHandler(async (req, res, next) => {
     // get response from ai dan vector embedding
     let ai_response = "";
     let new_vector_embed = []
+    console.log("CONTEXT",chat_combined_prompt)
     const response_generate = await FlaskQuery.getAIResponse(chat_combined_prompt, user_question);
     if (response_generate.is_error) {
         console.log(response_generate.error_msg)

@@ -2,22 +2,25 @@ const { client } = require("../../../configs/QdrantClient")
 
 const find_relative_conversation = async (chat_id, prompt_vector) => {
     try {
-        const results = await client.search('empati', {
+        console.log("CHAT ID", chat_id)
+        const results = await client.query('empati', {
             vector: prompt_vector,
-            limit: 5,
+            limit: 2,
             filter: {
                 must: [
                     {
-                        key: 'category',
+                        key: 'chat_session_id',
                         match: {
                             value: chat_id
                         }
                     }
                 ]
-            }
+            },
+            with_payload: ["chat_session_id", "content"]
         });
         console.log(results);
     } catch (error) {
+        console.log(error)
         throw error
     }
 
