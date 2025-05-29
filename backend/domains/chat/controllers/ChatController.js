@@ -3,9 +3,11 @@ const bcrypt = require("bcrypt");
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const moment = require('moment-timezone');
+const axios = require("axios")
 
 const ChatQuery = require("../query/ChatQuery")
 const VectorQuery = require("../query/VectorDBQuery")
+const FlaskQuery = require("../query/FlaskReq")
 /**
  * GET /chat/sessions
  * mengambil semua chat session user
@@ -77,8 +79,16 @@ const PostChat = asyncHandler(async (req, res, next) => {
     let chat_session = null;
 
     // add chat (jika belum ada)
-    const create_new_title = "SOMETHING" // suruh model bikinin title
+    let create_new_title = "" // suruh model bikinin title
     if (is_new) {
+        const response_title = await FlaskQuery.requestChatTitle(user_question);
+        if (response_title.is_error) {
+            res.status(500).json({ message: "Error when generating response" })
+        } else {
+            create_new_title = response_title.title
+        }
+
+
         responseChatInsert = await ChatQuery.insertNewChatSession(user_data.id, create_new_title)
         console.log(responseChatInsert.SQLResponse.rows)
         if (responseChatInsert.sql_error_message) {
@@ -98,39 +108,59 @@ const PostChat = asyncHandler(async (req, res, next) => {
         chat_session = responseChatSessionSearch.SQLResponse.rows[0]
     }
 
+    // get embedding
+    let vector_embed = []
+    const response_embed = await FlaskQuery.getEmbeddedPrompt(user_question);
+    if (response_embed.is_error) {
+        res.status(500).json({ message: "Error when generating response" })
+    } else {
+        vector_embed = response_embed.embedded
+    }
+
+
     // query 5 konteks dari vectordb
-    //let chat_relative_context = VectorQuery.find_relative_conversation(user_question);
-    let chat_relative_context = "";
+    let chat_relative_context = VectorQuery.find_relative_conversation(chat_id, vector_embed);
+    //let chat_relative_context = "";
+
+    if (chat_relative_context && chat_relative_context.length > 0) {
+        contextText = chat_relative_context.map(result => {
+            return result.payload?.chat || result.payload?.content || result.payload?.text || "";
+        }).join("\n");
+    }
+
     // kombinasi konteks
     let chat_combined_prompt = `
-        QUESTION:
+        PROMPT:
         ${user_question} \n
-
-        PREVIOUS QUESTION (Use only if relevant):
-        bla bla \n
 
         RELATIVE CONTEXT:
         ${chat_relative_context}
 
-        prompt darimu khel ada tambahan??
     `
 
     // get response from ai dan vector embedding
-
-
-
+    let ai_response = "";
+    let new_vector_embed = []
+    const response_generate = await FlaskQuery.getAIResponse(chat_combined_prompt, user_question);
+    if (response_generate.is_error) {
+        res.status(500).json({ message: "Error when generating response" })
+    } else {
+        ai_response = response_generate.ai_response
+        new_vector_embed = response_generate.embedding
+    }
 
     // insert response dan chat user ke database
     //console.log(chat_session);
-    const chatInsertResponse = await ChatQuery.insertUserAndAI("Test AI", user_question, chat_session.id)
+    const chatInsertResponse = await ChatQuery.insertUserAndAI(ai_response, user_question, chat_session.id)
     if (chatInsertResponse.sql_error_message) {
         throw new Error(chatInsertResponse.sql_error_message);
     }
 
     // insert embedding ke vectordb
+    const insertEmbedding = await VectorQuery.insert_new_vector(chat_id, new_vector_embed, chat_combined_prompt)
 
 
-    return res.status(200).json({ message: "Chat uploaded", ai_response: "Test AI", error_ai: false, error_response: null })
+    return res.status(200).json({ message: "Chat uploaded", ai_response: ai_response, title: create_new_title, error_ai: false, error_response: null })
 })
 
 module.exports = {

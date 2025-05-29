@@ -2,6 +2,7 @@ How to run the chatbot?
 1. conda create -n empati python=3.10 -y
 2. conda activate empati
 3. pip install -r requirements.txt
+4. python app.py
 
 
 Dokumentasi endpoint
