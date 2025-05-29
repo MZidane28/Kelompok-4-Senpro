@@ -83,7 +83,8 @@ const PostChat = asyncHandler(async (req, res, next) => {
     if (is_new) {
         const response_title = await FlaskQuery.requestChatTitle(user_question);
         if (response_title.is_error) {
-            res.status(500).json({ message: "Error when generating response" })
+            console.log(response_title.error_msg)
+            return res.status(500).json({ message: "Error when generating response" })
         } else {
             create_new_title = response_title.title
         }
@@ -112,7 +113,8 @@ const PostChat = asyncHandler(async (req, res, next) => {
     let vector_embed = []
     const response_embed = await FlaskQuery.getEmbeddedPrompt(user_question);
     if (response_embed.is_error) {
-        res.status(500).json({ message: "Error when generating response" })
+        console.log(response_embed.error_msg)
+        return res.status(500).json({ message: "Error when generating response" })
     } else {
         vector_embed = response_embed.embedded
     }
@@ -143,7 +145,8 @@ const PostChat = asyncHandler(async (req, res, next) => {
     let new_vector_embed = []
     const response_generate = await FlaskQuery.getAIResponse(chat_combined_prompt, user_question);
     if (response_generate.is_error) {
-        res.status(500).json({ message: "Error when generating response" })
+        console.log(response_generate.error_msg)
+        return res.status(500).json({ message: "Error when generating response" })
     } else {
         ai_response = response_generate.ai_response
         new_vector_embed = response_generate.embedding
