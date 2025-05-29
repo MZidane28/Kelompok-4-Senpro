@@ -23,7 +23,7 @@ function Page() {
   useEffect(() => {
     const fetchChatTitles = async () => {
       try {
-        const res = await fetch("http://localhost:3500/chat/sessions", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/chat/sessions`, {
           credentials: 'include'
         });        
         const data = await res.json();
@@ -50,7 +50,7 @@ function Page() {
   
   const handleSelectChat = async (chatTitle) => {
     try {
-      const res = await fetch("http://localhost:3500/chat/sessions", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/chat/sessions`, {
         credentials: 'include'
       });      
       const data = await res.json();
@@ -58,7 +58,7 @@ function Page() {
   
       if (!session) return;
   
-      const logsRes = await fetch(`http://localhost:3500/chat/logs?chat_id=${session.id}`, {
+      const logsRes = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/chat/logs?chat_id=${session.id}`, {
         credentials: 'include'
       });      
       const logsData = await logsRes.json();

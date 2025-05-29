@@ -26,7 +26,7 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [], firstMessageS
   const handleSend = async () => {
     if (input.trim() === '') return;
   
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3500';
+    const baseURL = process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:3500';
   
     const userMessage = { id: Date.now(), text: input, type: 'user' };
     const loadingMessageId = Date.now() + 1;
