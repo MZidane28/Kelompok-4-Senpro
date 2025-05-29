@@ -67,7 +67,9 @@ def response_only():
         {context if context else "No additional context provided."}
     """
 
-    response = qa_chain.invoke({"input": combined_input}) 
+    var_test = 0;
+
+    response = qa_chain.invoke({"input": combined_input, "context": combined_input}) 
     raw_answer = response["answer"]
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()

@@ -44,6 +44,7 @@ const getEmbeddedPrompt = async (chat_body) => {
 
 const getAIResponse = async (context, prompt) => {
     try {
+        console.log("XONE", context)
         const response = await axios.post(process.env.FLASK_URL + "/response-only", {
             context: context,
             prompt: prompt
@@ -56,7 +57,7 @@ const getAIResponse = async (context, prompt) => {
             error_msg: null
         }
     } catch (error) {
-        console.log(error.message)
+        //console.log(error)
         return {
             is_error: true,
             error_msg: error.message
