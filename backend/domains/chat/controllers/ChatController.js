@@ -156,9 +156,10 @@ const PostChat = asyncHandler(async (req, res, next) => {
     if (chatInsertResponse.sql_error_message) {
         throw new Error(chatInsertResponse.sql_error_message);
     }
+    const combined_question_and_response = `${user_question}; ${ai_response}`
 
     // insert embedding ke vectordb
-    const insertEmbedding = await VectorQuery.insert_new_vector(chat_id, new_vector_embed, chat_combined_prompt)
+    const insertEmbedding = await VectorQuery.insert_new_vector(chat_id_context, new_vector_embed, combined_question_and_response)
 
 
     return res.status(200).json({ message: "Chat uploaded", ai_response: ai_response, title: create_new_title, error_ai: false, error_response: null })

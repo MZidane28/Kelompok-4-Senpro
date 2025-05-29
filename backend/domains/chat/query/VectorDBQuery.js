@@ -1,5 +1,5 @@
 const { client } = require("../../../configs/QdrantClient")
-
+const { v4: uuidv4 } = require('uuid');
 const find_relative_conversation = async (chat_id, prompt_vector) => {
     try {
         //console.log("CHAT ID", chat_id)
@@ -18,7 +18,7 @@ const find_relative_conversation = async (chat_id, prompt_vector) => {
             },
             with_payload: ["chat_session_id", "content"]
         });
-        //console.log(results);
+        return results
     } catch (error) {
         console.log(error)
         throw error
@@ -31,7 +31,7 @@ const insert_new_vector = async (chat_id, vector, chat_text) => {
         const response = await client.upsert('empati', {
             points: [
                 {
-                    id: 1, // can be a number or string
+                    id: uuidv4(), // can be a number or string
                     vector: vector, // must match the dimension defined when creating the collection
                     payload: {
                         chat_session_id: chat_id,
