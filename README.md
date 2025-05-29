@@ -182,3 +182,6 @@ Pengujian integrasi antara frontend dan backend dilakukan secara manual untuk me
 
 ## Link Demo (Youtube)
 https://youtu.be/PdYY8CdHEB4
+
+## Catatan
+Server backend jalan dalam Azure Virtual Machine yang akan aktif hanya selama satu bulan terhitung sejak 30 Mei 2025. Setelah satu bulan, server akan mati dan API backend tidak dapat diakses. Server mati setelah satu bulan karena Azure VM memerlukan biaya bulanan besar sehingga credit hanya cukup untuk membayar satu bulan untuk penyewaan VM.
