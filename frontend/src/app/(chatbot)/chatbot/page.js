@@ -17,6 +17,8 @@ function Page() {
 
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [presetMessages, setPresetMessages] = useState([]);
+  const [firstMessageSent, setFirstMessageSent] = useState(false);
+
 
   useEffect(() => {
     const fetchChatTitles = async () => {
@@ -34,7 +36,7 @@ function Page() {
         };
   
         data.sessions.forEach((session) => {
-          grouped.today.push(session.chat_title); // You can enhance this to categorize by time
+          grouped.today.push(session.chat_title);
         });
   
         setChatTitles(grouped);
@@ -56,37 +58,49 @@ function Page() {
   
       if (!session) return;
   
-      const logsRes = await fetch(`http://localhost:3500/chat/logs?chat_id=${session.id}`);
+      const logsRes = await fetch(`http://localhost:3500/chat/logs?chat_id=${session.id}`, {
+        credentials: 'include'
+      });      
       const logsData = await logsRes.json();
   
       setCurrentSessionId(session.id);
   
-      const loadedMessages = logsData.logs.flatMap((log, index) => ([
-        { id: index * 2, text: log.message, type: 'user' },
-        { id: index * 2 + 1, text: log.ai_response, type: 'bot' }
-      ]));
+      if (!logsData.logs || !Array.isArray(logsData.logs)) {
+        console.error("Invalid logs data:", logsData);
+        return;
+      }
+      
+      const loadedMessages = [...logsData.logs]
+        .reverse()
+        .flatMap((log, index) => ([
+          { id: index * 2, text: log.message, type: 'user' },
+          { id: index * 2 + 1, text: log.ai_response, type: 'bot' }
+        ]));
+
+      
   
       setPresetMessages(loadedMessages);
   
     } catch (err) {
       console.error("Error loading session:", err);
     }
+    setFirstMessageSent(true);
   };
   
 
   const handleNewChat = () => {
-    setCurrentSessionId(null); // or undefined
+    setCurrentSessionId(null);
+    setPresetMessages([]);
   };
   
 
   const handleFirstMessage = async (msg, sessionId, title) => {
-    // Use the actual title returned by the backend
     const finalTitle = title || (msg.length > 20 ? msg.substring(0, 20) + "..." : msg);
   
     setChatTitles((prev) => ({
       ...prev,
       today: [...prev.today, finalTitle],
-    }));
+    }));    
   };
   
 
@@ -99,11 +113,13 @@ function Page() {
         onSelectChat={handleSelectChat}
       />
         <div className="flex flex-col flex-1 h-full overflow-hidden">
-          <ChatBot
-            sessionId={currentSessionId}
-            onFirstMessage={handleFirstMessage}
-            presetMessages={presetMessages}
-          />
+        <ChatBot
+          sessionId={currentSessionId}
+          onFirstMessage={handleFirstMessage}
+          presetMessages={presetMessages}
+          firstMessageSent={firstMessageSent}
+          setFirstMessageSent={setFirstMessageSent}
+        />
         </div>
       </main>
     </div>

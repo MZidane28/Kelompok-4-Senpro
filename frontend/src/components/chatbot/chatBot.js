@@ -5,9 +5,9 @@ import axios from 'axios';
 import { flushSync } from 'react-dom';
 import dynamic from 'next/dynamic';
 
-function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
+function Chatbot({ sessionId, onFirstMessage, presetMessages = [], firstMessageSent, setFirstMessageSent }) {
   const [messages, setMessages] = useState(presetMessages);
-  const [firstMessageSent, setFirstMessageSent] = useState(false);
+  //const [firstMessageSent, setFirstMessageSent] = useState(false);
   const [input, setInput] = useState('');
   const [userId] = useState(() => {
     return `anonymous-${crypto.randomUUID()}`;
@@ -73,8 +73,7 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
   
       if (!firstMessageSent && onFirstMessage) {
         const newSessionId = res.data.chat_id; // get from response
-        setCurrentSessionId(newSessionId);
-      
+
         await onFirstMessage(input, newSessionId, '');
         setFirstMessageSent(true);
       }
@@ -93,10 +92,6 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
       console.error('Chat error:', error);
     }
   };  
-
-  
-  
-  
 
   return (
     <div className="flex flex-col h-full bg-[#FFFBF2] font-poppins">
