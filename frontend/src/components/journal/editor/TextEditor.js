@@ -46,9 +46,9 @@ function TextEditor({
                     <div className='flex flex-row mt-2 gap-2 cursor-pointer hover:text-yellow-500'>
                         <FaGrinHearts
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',
-                                mood == "heart" ? 'text-yellow-500' : 'text-black'
+                                mood == "excited" ? 'text-yellow-500' : 'text-black'
                             )}
-                            onClick={(e) => onChangeMood('heart')}
+                            onClick={(e) => onChangeMood('excited')}
                         />
                         <FaSmile
                             className={twMerge('w-9 h-9cursor-pointer hover:text-yellow-500',

@@ -99,7 +99,7 @@ const GetAIResponseById = asyncHandler(async (req, res, next) => {
         throw new Error(journalByIdResult.sql_error_message);
     }
 
-    return res.status(200).json({ message: "Journal AI", ai_response: flask_journal.ai_response })
+    return res.status(200).json({ message: "Journal AI Created", ai_response: flask_journal.ai_response })
 })
 
 /**

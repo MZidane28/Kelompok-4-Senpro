@@ -165,6 +165,7 @@ export const JournalProvider = ({ children }) => {
             const response = await axios.get(process.env.NEXT_PUBLIC_BE_URL + "/journal/ai/" + selectedTitle, {
                 withCredentials: true
             })
+            console.log(response.data)
             const ai_response = response.data.ai_response
             const data_journal = response.data.journal
             setActiveInputJournal({
