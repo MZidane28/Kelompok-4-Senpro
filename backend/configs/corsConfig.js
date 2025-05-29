@@ -1,4 +1,4 @@
-let allowedOrigins = ['http://localhost:3000', 'https://empati.biz.id'];
+let allowedOrigins = ['http://localhost:3000', 'https://www.empati.biz.id'];
 
 const corsConfig = () => {
     if(process.env.environment == "production") {
