@@ -35,7 +35,7 @@ export const JournalProvider = ({ children }) => {
 
     const [active_id, SetActiveID] = useState(2) // hapus pas deploy untuk dummy
 
-    const { loading, user, fetchUser } = useAuth();
+    const { loading, user, fetchUser, ensureUser } = useAuth();
 
     const [active_input_journal, setActiveInputJournal] = useState({
         mood: "",
@@ -186,6 +186,17 @@ export const JournalProvider = ({ children }) => {
     //         </div>
     //     )
     // }
+
+    const handleEnsureUser = async () => {
+        const validUser = await ensureUser();
+        if (validUser == false) {
+            router.replace('/')
+        }
+    }
+
+    useEffect(() => {
+        handleEnsureUser()
+    }, [])
 
     useEffect(() => {
         fetchJournalList()

@@ -67,7 +67,6 @@ const getAIResponse = async (context, prompt) => {
 
 const getJournalResponse = async (journal_body) => {
     try {
-        console.log("XONE", context)
         const response = await axios.post(process.env.FLASK_URL + "/journalresponse", {
             journal: journal_body
         })
