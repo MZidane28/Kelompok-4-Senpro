@@ -20,10 +20,14 @@ if(process.env.DB_LOCAL == "TRUE") {
 } else {
   console.log("USE DB SERVER")
   db = new Pool({
-    connectionString: process.env.DB_STRING,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
     connectionTimeoutMillis: 7500,
     ssl: {
-      rejectUnauthorized: true,
+      rejectUnauthorized: false,
       ca: process.env.DB_CA,
     },
   });

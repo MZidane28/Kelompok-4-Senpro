@@ -1,19 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // ✅ Tambahan
 import { Pencil, Eye, EyeOff } from 'lucide-react';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfilePage() {
   const router = useRouter(); // ✅ Tambahan
+  const { ensureUser, user, handleLogout } = useAuth();
 
   const [editingUsername, setEditingUsername] = useState(false);
-  const [username, setUsername] = useState('Username');
-  const [newUsername, setNewUsername] = useState('Username');
-  const [password, setPassword] = useState('password123');
+  const [username, setUsername] = useState(user?.username ?? '');
+  const [newUsername, setNewUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
 
   const handleUsernameEdit = () => {
     setEditingUsername(true);
@@ -27,10 +30,24 @@ export default function ProfilePage() {
     window.history.back();
   };
 
-  const handleLogout = () => {
-    alert('Logout berhasil!');
-    router.push('/'); // ✅ Redirect ke halaman home
+  const Logout = async () => {
+    const validLogout = await handleLogout()
+    if(validLogout) {
+      router.push('/'); // ✅ Redirect ke halaman home
+    }
   };
+
+  const handleEnsureUser = async () => {
+    const validUser = await ensureUser();
+    console.log("USER", validUser)
+    if (validUser == false) {
+      router.push('/')
+    }
+  }
+
+  useEffect(() => {
+    handleEnsureUser()
+  }, [])
 
   return (
     <div className="flex flex-col min-h-screen bg-[#fffaf4] text-black">
@@ -60,7 +77,7 @@ export default function ProfilePage() {
                   <h2 className="text-2xl font-bold text-center">{username}</h2>
                   <div
                     className="h-1 bg-black mt-1 mx-auto"
-                    style={{ width: `${username.length}ch` }}
+                    style={{ width: `${username?.length}ch` }}
                   ></div>
                   <button
                     onClick={handleUsernameEdit}
@@ -78,7 +95,7 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium mb-1">Email Address</label>
               <input
                 type="email"
-                value="tungtung@gmail.com"
+                value={user?.email}
                 readOnly
                 className="w-full px-4 py-2 border rounded-full bg-gray-100 cursor-not-allowed"
               />
@@ -92,6 +109,7 @@ export default function ProfilePage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring focus:border-black"
+                  placeholder='New Password'
                 />
                 <button
                   type="button"
@@ -148,7 +166,7 @@ export default function ProfilePage() {
                   Batal
                 </button>
                 <button
-                  onClick={handleLogout}
+                  onClick={Logout}
                   className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
                 >
                   Ya
