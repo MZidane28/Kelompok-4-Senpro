@@ -18,9 +18,17 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
 
   const handleSend = async () => {
     if (input.trim() === '') return;
+    
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const formData = new URLSearchParams();
+    formData.append("msg", input);
+    formData.append("session_id", sessionId);
+    formData.append("user_id", userId);
+
     if (messages.length === 0 && onFirstMessage && sessionId) {
       const titleRes = await axios.post(`${baseURL}/title`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        withCredentials: true
       });
       const title = titleRes.data.title;
       console.log("Generated title:", title);
@@ -40,26 +48,13 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
     // Clear input immediately
     setInput('');
   
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-    const formData = new URLSearchParams();
-    formData.append("msg", input);
-    formData.append("session_id", sessionId);
-    formData.append("user_id", userId);
-  
     try {
       await axios.post(`${baseURL}/embedding`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        withCredentials: true
       });
-  
-      if (messages.length === 0) {
-        const titleRes = await axios.post(`${baseURL}/title`, formData, {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
-        const title = titleRes.data.title;
-        console.log("Generated title:", title);
-      }
     } catch (err) {
-      console.error('Embedding or title generation failed:', err);
+      console.error('Embedding failed:', err);
     }
   
     // Animate loading message
@@ -80,7 +75,8 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
   
     try {
       const res = await axios.post(`${baseURL}/generateresponse`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        withCredentials: true
       });
   
       clearInterval(loadingInterval);
@@ -111,7 +107,6 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
 
   return (
     <div className="flex flex-col h-full bg-[#FFFBF2] font-poppins">
-      {/* Chat Bubbles (Scrollable) */}
       <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3">
         {messages.map((msg) => (
           <div
@@ -127,7 +122,6 @@ function Chatbot({ sessionId, onFirstMessage, presetMessages = [] }) {
         ))}
       </div>
   
-      {/* Chat Input (Sticky at Bottom) */}
       <div className="sticky bottom-0 left-0 w-full bg-[#FFFBF2] px-6 py-4 border-t border-gray-300">
         <div className="flex items-end gap-2">
           <textarea

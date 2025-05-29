@@ -17,7 +17,23 @@ import os
 import re
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True,
+        "expose_headers": ["Content-Type"]
+    }
+})
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    return response
 load_dotenv()
 
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
@@ -58,6 +74,9 @@ def response_only():
 
     if not msg:
         return jsonify({"error": "Missing 'prompt' field in JSON"}), 400
+    
+    if not context:
+        return jsonify({"error": "Missing 'context' field in JSON"}), 400
 
     combined_input = f"""
         USER QUESTION:
@@ -66,8 +85,8 @@ def response_only():
         CONTEXT:
         {context if context else "No additional context provided."}
     """
-
-    response = qa_chain.invoke({"input": combined_input}) 
+    temp = create_retrieval_chain(context, qa_chain)
+    response = temp.invoke({"input": msg}) 
     raw_answer = response["answer"]
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
