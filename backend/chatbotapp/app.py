@@ -47,6 +47,7 @@ docsearch = PineconeVectorStore.from_existing_index(index_name=index_name, embed
 retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
 llm = ChatGroq(model="deepseek-r1-distill-llama-70b", temperature=0.7, max_tokens=200)
+llm1 = ChatGroq(model="deepseek-r1-distill-llama-70b", temperature=0.7, max_tokens=500)
 prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", "{input}")])
 qa_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, qa_chain)
@@ -79,18 +80,15 @@ def response_only():
         return jsonify({"error": "Missing 'context' field in JSON"}), 400
 
     combined_input = f"""
-        USER QUESTION:
-        {msg}
-
         CONTEXT:
         {context if context else "No additional context provided."}
     """
-    #temp = create_retrieval_chain(context, qa_chain)
-    #response = temp.invoke({"input": msg}) 
+
     response = qa_chain.invoke({
-    "input_documents": [Document(page_content=combined_input)]
+    "input": msg,
+    "context": [Document(page_content=combined_input)]
     })
-    raw_answer = response["answer"]
+    raw_answer = response
 
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
     print("\n[RAW RESPONSE]:\n", raw_answer)
@@ -111,7 +109,7 @@ def title_only():
         "Generate a short, clean, human-readable title (max 5 words) for the following message. Don't include extra tags or reasoning:\n\n{context}"
     )
     title_chain = create_stuff_documents_chain(
-        llm,
+        llm1,
         title_prompt,
         document_variable_name="context"
     )
