@@ -35,6 +35,73 @@ prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", 
 qa_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, qa_chain)
 
+@app.route("/embed-only", methods=["POST"])
+def embed_only():
+    data = request.get_json()
+    msg = data.get("msg")
+
+    if not msg:
+        return jsonify({"error": "Missing 'msg' field in JSON"}), 400
+
+    vector = embeddings.embed_query(msg)
+
+    return jsonify({
+        "embedded": vector,
+    })
+
+
+@app.route("/response-only", methods=["POST"])
+def response_only():
+    data = request.get_json()
+    msg = data.get("msg")
+    context = data.get("context") 
+
+    if not msg:
+        return jsonify({"error": "Missing 'msg' field in JSON"}), 400
+
+    combined_input = f"""
+        USER QUESTION:
+        {msg}
+
+        CONTEXT:
+        {context if context else "No additional context provided."}
+    """
+
+    response = qa_chain.invoke({"input": combined_input}) 
+    raw_answer = response["answer"]
+
+    cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
+    print("\n[RAW RESPONSE]:\n", raw_answer)
+
+    embedded_cleaned_answer = embeddings.embed_query(cleaned_answer)
+
+    return jsonify({
+        "ai_response": cleaned_answer,
+        "embedding": embedded_cleaned_answer,
+    })
+
+@app.route("/title-only", methods=["POST"])
+def title_only():
+    data = request.get_json()
+    msg = data.get("msg")
+    
+    title_prompt = PromptTemplate.from_template(
+        "Generate a short, clean, human-readable title (max 5 words) for the following message. Don't include extra tags or reasoning:\n\n{context}"
+    )
+    title_chain = create_stuff_documents_chain(
+        llm,
+        title_prompt,
+        document_variable_name="context"
+    )
+
+    documents = [Document(page_content=msg)]
+    title_response = title_chain.invoke({"context": documents})
+    raw_title = title_response.strip()
+    title = re.sub(r"<think>.*?</think>", "", raw_title, flags=re.DOTALL).strip()
+    
+    print("\n[GENERATED TITLE]:", title, flush=True)
+    return jsonify({"title": title})
+
 
 @app.route("/embedding", methods=["POST"])
 def embedding():
@@ -42,7 +109,6 @@ def embedding():
     session_id = request.form.get("session_id", str(uuid.uuid4()))
     user_id = request.form.get("user_id", "anonymous")
 
-    # Embed and store the user message
     metadata = {
         "session_id": session_id,
         "user_id": user_id,
@@ -66,7 +132,7 @@ def generate_response():
         search_kwargs={
             "k": 3,
             "filter": {
-                "session_id": session_id  # or use "user_id": user_id if preferred
+                "session_id": session_id  # or tambahin user id??
             }
         }
     )
